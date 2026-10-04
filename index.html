@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dog Breed Visualisation</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <main>
+    <h1>Which dog breeds lead the list?</h1>
+
+    <p>
+      Compare the recorded counts for the ten selected breed
+      categories. Hover over a dot to see its exact value.
+    </p>
+
+    <div class="chart-scroll">
+      <div id="breed-chart" class="chart" aria-label="Recorded counts by dog breed"></div>
+    </div>
+
+    <p class="note">
+      Australian Kelpie and Border Collie lead these selected
+      categories, with recorded counts of 18,107 and 17,353.
+      The gap between them is 754, compared with a gap of 4,289
+      between Border Collie and third-placed Labrador Retriever.
+    </p>
+
+    <h2>Registration changes across dog groups</h2>
+
+    <p>
+      Each cell compares a group's registrations with its 2018 total.
+      Orange indicates a decrease, while blue indicates an increase.
+      Hover over a cell for the exact figures.
+    </p>
+
+    <div class="chart-scroll">
+      <div id="registration-heatmap" class="chart" aria-label="Registration changes by dog group and year"></div>
+    </div>
+
+    <p id="registration-summary">
+      All seven groups recorded fewer registrations in 2025 than
+      in 2018. Non-Sporting had the largest percentage decline
+      at 56.1%, compared with 15.0% for Gundogs.
+    </p>
+
+    <!-- MAP SECTION GOES HERE -->
+    <section aria-labelledby="map-heading">
+      <h2 id="map-heading">
+        Paws on the Map: Where Are Casey’s Dog Records Concentrated?
+      </h2>
+
+      <p>
+        Explore 27,618 dog registration records across 29 suburbs.
+        Larger circles represent more dog records.
+        Hover over a circle to see the suburb’s count and share
+        of the dataset.
+      </p>
+
+      <div class="chart-scroll">
+        <div id="dog-map" class="chart" role="img" aria-label="Dog registration records by suburb in Casey"></div>
+      </div>
+
+      <p>
+        Berwick has the highest count, with 4,971 dog records—
+        just over twice Narre Warren South’s 2,425.
+        These counts show where records are concentrated;
+        they do not measure dog ownership per resident.
+      </p>
+
+      <p class="note">
+        Dog records have a last modification date of 28 August 2024.
+        Circles mark representative locations within suburbs,
+        not individual animal locations.
+        Source:
+        <a href="https://data.casey.vic.gov.au/explore/dataset/animal-registrations/">
+          City of Casey animal registration records
+        </a>
+        and
+        <a href="https://data.casey.vic.gov.au/explore/dataset/animal-registrations-suburb/">
+          suburb geometry
+        </a>.
+      </p>
+    </section>
+    <section aria-labelledby="townsville-ranks-heading">
+      <h2 id="townsville-ranks-heading">How have breed rankings changed in Townsville?</h2>
+      <p>
+        Follow six selected breed categories across the March snapshots
+        for 2024, 2025, and 2026. Smaller rank numbers indicate higher rankings.
+        Hover over a point to see its rank and recorded count.
+      </p>
+      <div class="chart-scroll">
+        <div id="townsville-bump" class="chart" aria-label="Selected dog breed rankings in Townsville from 2024 to 2026"></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="townsville-counts-heading">
+      <h2 id="townsville-counts-heading">How have Townsville's breed counts changed?</h2>
+      <p>
+        Compare March 2024 (orange) with March 2026 (blue)
+        across six selected breed categories.
+        Each line connects the two recorded counts for a breed category.
+        Hover over a dot for the exact counts and percentage change.
+      </p>
+      <div class="chart-scroll">
+        <div id="townsville-connected-dots" class="chart" aria-label="Selected dog breed counts in Townsville in 2024 and 2026"></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="townsville-map-heading">
+      <h2 id="townsville-map-heading">
+        Fewer Records Across Townsville: Where Were the Declines Largest?
+      </h2>
+
+      <p>
+        All ten electoral divisions had fewer dog registration records
+        in March 2026 than in March 2024. Darker orange indicates a
+        larger percentage decline. Hover over a division to compare
+        its counts.
+      </p>
+
+      <div
+        id="townsville-decline-map"
+        aria-label="Percentage decline in Townsville dog registration records by electoral division">
+      </div>
+
+      <p>
+        Division 5 recorded the largest proportional decline at 11.0%,
+        compared with 5.4% in Division 8. Although every division
+        recorded a decrease, the size of that decrease varied.
+      </p>
+
+      <p class="note">
+        Numbers identify electoral divisions. The enlarged view below
+        the overview shows divisions 5–9 using the same colour scale.
+      </p>
+
+      <p class="note">
+        Dogs only. Counts use the division assignments recorded in each
+        March snapshot. Changes in registration records do not necessarily
+        represent equivalent changes in the actual dog population.
+      </p>
+
+      <p class="note">
+        Sources: Townsville City Council Animal Registrations,
+        March 2024 and March 2026;
+        <a href="https://maps.townsville.qld.gov.au/arcgis/rest/services/PUB_Core/PUB_Core/MapServer/5">
+          Townsville City Council divisional boundaries
+        </a>.
+      </p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
