@@ -1,0 +1,105 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Australian Kelpie and Border Collie lead the list",
+    "subtitle": "Recorded counts for the ten selected breed categories",
+    "anchor": "start"
+  },
+  "width": 500,
+  "height": {"step": 36},
+  "data": {
+    "url": "diagrams/top10_dogs_lollipop/top10_dogs.csv",
+    "format": {
+      "type": "csv",
+      "parse": {"Count": "number"}
+    }
+  },
+  "encoding": {
+    "y": {
+      "field": "Breed",
+      "type": "nominal",
+      "sort": "-x",
+      "title": null,
+      "axis": {
+        "labelLimit": 260,
+        "labelFontSize": 12,
+        "ticks": false,
+        "domain": false
+      }
+    },
+    "x": {
+      "field": "Count",
+      "type": "quantitative",
+      "title": "Recorded count",
+      "scale": {"domain": [0, 21000]},
+      "axis": {
+        "format": ",d",
+        "tickCount": 5,
+        "grid": true
+      }
+    },
+    "tooltip": [
+      {
+        "field": "Breed",
+        "type": "nominal",
+        "title": "Breed"
+      },
+      {
+        "field": "Count",
+        "type": "quantitative",
+        "title": "Recorded count",
+        "format": ",d"
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 2,
+        "color": "#B8C2C7"
+      },
+      "encoding": {
+        "x2": {"datum": 0}
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 120,
+        "opacity": 1
+      },
+      "encoding": {
+        "color": {
+          "condition": {
+            "test": "datum.Breed === 'Australian Kelpie' || datum.Breed === 'Border Collie'",
+            "value": "#147D92"
+          },
+          "value": "#78868D"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "middle",
+        "dx": 10,
+        "fontSize": 12,
+        "color": "#243238"
+      },
+      "encoding": {
+        "text": {
+          "field": "Count",
+          "type": "quantitative",
+          "format": ",d"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": null},
+    "axis": {"gridColor": "#E8ECEF"}
+  }
+}
