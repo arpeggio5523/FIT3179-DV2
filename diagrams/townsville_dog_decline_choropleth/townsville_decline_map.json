@@ -1,0 +1,310 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Dog records only. Decline = (March 2024 count - March 2026 count) / March 2024 count. Division assignments are used as recorded. Overview plus enlargement of divisions 5-9.",
+  "data": {
+    "url": "diagrams/townsville_dog_decline_choropleth/townsville_dog_decline.geojson",
+    "format": {
+      "type": "json",
+      "property": "features"
+    }
+  },
+  "vconcat": [
+    {
+      "title": {
+        "text": "Townsville: all 10 divisions",
+        "anchor": "start"
+      },
+      "width": 600,
+      "height": 470,
+      "projection": {
+        "type": "azimuthalEqualArea",
+        "rotate": [
+          -146.633333,
+          19.35,
+          0
+        ]
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#FFFFFF",
+            "strokeWidth": 1.2
+          },
+          "encoding": {
+            "color": {
+              "field": "properties.DeclineRate",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0,
+                  0.12
+                ],
+                "range": [
+                  "#FFF4E8",
+                  "#A63603"
+                ],
+                "clamp": true
+              },
+              "legend": {
+                "title": "Decline in dog records (%)",
+                "format": ".0%",
+                "orient": "bottom",
+                "direction": "horizontal",
+                "gradientLength": 280,
+                "values": [
+                  0,
+                  0.03,
+                  0.06,
+                  0.09,
+                  0.12
+                ]
+              }
+            },
+            "tooltip": [
+              {
+                "field": "properties.DivisionName",
+                "type": "nominal",
+                "title": "Electoral division"
+              },
+              {
+                "field": "properties.Dogs2024",
+                "type": "quantitative",
+                "title": "March 2024 dog records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.Dogs2026",
+                "type": "quantitative",
+                "title": "March 2026 dog records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.Decrease",
+                "type": "quantitative",
+                "title": "Fewer records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.DeclineRate",
+                "type": "quantitative",
+                "title": "Percentage decline",
+                "format": ".1%"
+              }
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "fontSize": 13,
+            "fontWeight": "bold",
+            "color": "white"
+          },
+          "encoding": {
+            "longitude": {
+              "field": "properties.LabelLongitude",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "properties.LabelLatitude",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "properties.Division"
+            },
+            "tooltip": [
+              {
+                "field": "properties.DivisionName",
+                "type": "nominal",
+                "title": "Electoral division"
+              },
+              {
+                "field": "properties.Dogs2024",
+                "type": "quantitative",
+                "title": "March 2024 dog records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.Dogs2026",
+                "type": "quantitative",
+                "title": "March 2026 dog records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.Decrease",
+                "type": "quantitative",
+                "title": "Fewer records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.DeclineRate",
+                "type": "quantitative",
+                "title": "Percentage decline",
+                "format": ".1%"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "Enlarged view: divisions 5–9 only",
+        "anchor": "start"
+      },
+      "width": 600,
+      "height": 290,
+      "projection": {
+        "type": "azimuthalEqualArea",
+        "rotate": [
+          -146.633333,
+          19.35,
+          0
+        ]
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#FFFFFF",
+            "strokeWidth": 1.2
+          },
+          "encoding": {
+            "color": {
+              "field": "properties.DeclineRate",
+              "type": "quantitative",
+              "scale": {
+                "domain": [
+                  0,
+                  0.12
+                ],
+                "range": [
+                  "#FFF4E8",
+                  "#A63603"
+                ],
+                "clamp": true
+              },
+              "legend": {
+                "title": "Decline in dog records (%)",
+                "format": ".0%",
+                "orient": "bottom",
+                "direction": "horizontal",
+                "gradientLength": 280,
+                "values": [
+                  0,
+                  0.03,
+                  0.06,
+                  0.09,
+                  0.12
+                ]
+              }
+            },
+            "tooltip": [
+              {
+                "field": "properties.DivisionName",
+                "type": "nominal",
+                "title": "Electoral division"
+              },
+              {
+                "field": "properties.Dogs2024",
+                "type": "quantitative",
+                "title": "March 2024 dog records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.Dogs2026",
+                "type": "quantitative",
+                "title": "March 2026 dog records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.Decrease",
+                "type": "quantitative",
+                "title": "Fewer records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.DeclineRate",
+                "type": "quantitative",
+                "title": "Percentage decline",
+                "format": ".1%"
+              }
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "fontSize": 13,
+            "fontWeight": "bold",
+            "color": "white"
+          },
+          "encoding": {
+            "longitude": {
+              "field": "properties.LabelLongitude",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "properties.LabelLatitude",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "properties.Division"
+            },
+            "tooltip": [
+              {
+                "field": "properties.DivisionName",
+                "type": "nominal",
+                "title": "Electoral division"
+              },
+              {
+                "field": "properties.Dogs2024",
+                "type": "quantitative",
+                "title": "March 2024 dog records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.Dogs2026",
+                "type": "quantitative",
+                "title": "March 2026 dog records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.Decrease",
+                "type": "quantitative",
+                "title": "Fewer records",
+                "format": ",d"
+              },
+              {
+                "field": "properties.DeclineRate",
+                "type": "quantitative",
+                "title": "Percentage decline",
+                "format": ".1%"
+              }
+            ]
+          }
+        }
+      ],
+      "transform": [
+        {
+          "filter": "datum.properties.Division >= 5 && datum.properties.Division <= 9"
+        }
+      ]
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "color": "shared"
+    }
+  },
+  "spacing": 24,
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "title": {
+      "fontSize": 15
+    }
+  }
+}
