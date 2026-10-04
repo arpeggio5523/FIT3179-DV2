@@ -1,0 +1,134 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 380,
+  "height": 420,
+  "data": {
+    "url": "diagrams/townsville_breeds_bump/townsville_breed_ranks.json"
+  },
+  "encoding": {
+    "x": {
+      "field": "Year",
+      "type": "ordinal",
+      "sort": [
+        2024,
+        2025,
+        2026
+      ],
+      "title": "March snapshot",
+      "axis": {
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": "Rank",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          25,
+          1
+        ],
+        "nice": false
+      },
+      "title": "Rank among all recorded breed categories",
+      "axis": {
+        "values": [
+          1,
+          5,
+          10,
+          15,
+          20,
+          25
+        ]
+      }
+    },
+    "color": {
+      "field": "Breed",
+      "type": "nominal",
+      "scale": {
+        "domain": [
+          "Maltese Terrier Cross",
+          "Staffordshire Bull Terrier",
+          "Staffordshire Bull Terrier Cross",
+          "Jack Russell Terrier",
+          "Dachshund",
+          "Miniature Dachshund"
+        ],
+        "range": [
+          "#6B7280",
+          "#C46124",
+          "#A04F91",
+          "#237B91",
+          "#638C31",
+          "#6048AF"
+        ]
+      },
+      "legend": null
+    },
+    "detail": {
+      "field": "Breed"
+    },
+    "tooltip": [
+      {
+        "field": "Breed",
+        "type": "nominal"
+      },
+      {
+        "field": "Year",
+        "type": "ordinal"
+      },
+      {
+        "field": "Rank",
+        "type": "quantitative"
+      },
+      {
+        "field": "Count",
+        "type": "quantitative",
+        "format": ",d"
+      },
+      {
+        "field": "Tie",
+        "type": "nominal",
+        "title": "Categories sharing this count"
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2.5,
+        "point": {
+          "filled": true,
+          "size": 70
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.Year === 2026"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 12,
+        "fontSize": 11
+      },
+      "encoding": {
+        "text": {
+          "field": "Breed"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelFontSize": 12,
+      "titleFontSize": 12
+    }
+  }
+}
