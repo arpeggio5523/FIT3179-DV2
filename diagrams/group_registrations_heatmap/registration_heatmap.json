@@ -1,0 +1,102 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "How have registrations changed since 2018?",
+    "subtitle": "Each group is compared with its own 2018 total"
+  },
+  "width": 560,
+  "height": 300,
+  "data": {
+    "url": "diagrams/group_registrations_heatmap/group_registrations.csv",
+    "format": {"type": "csv"}
+  },
+  "transform": [
+    {
+      "calculate": "toNumber(datum['2018'])",
+      "as": "Baseline"
+    },
+    {
+      "fold": [
+        "2018", "2019", "2020", "2021",
+        "2022", "2023", "2024", "2025"
+      ],
+      "as": ["Year", "Registrations"]
+    },
+    {
+      "calculate": "toNumber(datum.Registrations)",
+      "as": "Count"
+    },
+    {
+      "calculate": "(datum.Count - datum.Baseline) / datum.Baseline",
+      "as": "Change"
+    }
+  ],
+  "mark": {
+    "type": "rect",
+    "stroke": "white",
+    "strokeWidth": 2
+  },
+  "encoding": {
+    "x": {
+      "field": "Year",
+      "type": "ordinal",
+      "sort": "ascending",
+      "title": null,
+      "axis": {"labelAngle": 0}
+    },
+    "y": {
+      "field": "Group",
+      "type": "nominal",
+      "sort": [
+        "Toys", "Terriers", "Gundogs", "Hounds",
+        "Working Dogs", "Utility", "Non-Sporting"
+      ],
+      "title": null
+    },
+    "color": {
+      "field": "Change",
+      "type": "quantitative",
+      "scale": {
+        "domain": [-0.6, 0, 0.6],
+        "range": ["#B35806", "#F7F7F7", "#2166AC"]
+      },
+      "legend": {
+        "title": "Change from 2018",
+        "format": ".0%",
+        "orient": "bottom",
+        "direction": "horizontal",
+        "gradientLength": 300
+      }
+    },
+    "tooltip": [
+      {
+        "field": "Group",
+        "type": "nominal"
+      },
+      {
+        "field": "Year",
+        "type": "ordinal"
+      },
+      {
+        "field": "Count",
+        "type": "quantitative",
+        "title": "Registrations",
+        "format": ",d"
+      },
+      {
+        "field": "Change",
+        "type": "quantitative",
+        "title": "Change from 2018",
+        "format": "+.1%"
+      }
+    ]
+  },
+  "config": {
+    "view": {"stroke": null},
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "labelFontSize": 12
+    }
+  }
+}
