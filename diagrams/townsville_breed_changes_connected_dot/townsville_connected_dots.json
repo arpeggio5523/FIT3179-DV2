@@ -1,0 +1,164 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 430,
+  "height": {
+    "step": 48
+  },
+  "data": {
+    "url": "diagrams/townsville_breed_changes_connected_dot/townsville_breed_changes.json"
+  },
+  "encoding": {
+    "y": {
+      "field": "Breed",
+      "type": "nominal",
+      "sort": {
+        "field": "Change",
+        "order": "ascending"
+      },
+      "title": null,
+      "axis": {
+        "labelLimit": 270
+      }
+    },
+    "tooltip": [
+      {
+        "field": "Breed",
+        "type": "nominal"
+      },
+      {
+        "field": "Count2024",
+        "type": "quantitative",
+        "title": "March 2024",
+        "format": ",d"
+      },
+      {
+        "field": "Count2026",
+        "type": "quantitative",
+        "title": "March 2026",
+        "format": ",d"
+      },
+      {
+        "field": "Change",
+        "type": "quantitative",
+        "title": "Change in records",
+        "format": "+,d"
+      },
+      {
+        "field": "PercentChange",
+        "type": "quantitative",
+        "title": "Percentage change",
+        "format": "+.1%"
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "color": "#AAB2B8",
+        "strokeWidth": 3
+      },
+      "encoding": {
+        "x": {
+          "field": "Count2024",
+          "type": "quantitative",
+          "title": "Dog registration records",
+          "scale": {
+            "domain": [
+              0,
+              1600
+            ]
+          },
+          "axis": {
+            "format": ",d"
+          }
+        },
+        "x2": {
+          "field": "Count2026"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "fold": [
+            "Count2024",
+            "Count2026"
+          ],
+          "as": [
+            "Snapshot",
+            "Count"
+          ]
+        },
+        {
+          "calculate": "datum.Snapshot === 'Count2024' ? 'March 2024' : 'March 2026'",
+          "as": "YearLabel"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 110,
+        "opacity": 0.85,
+        "stroke": "white",
+        "strokeWidth": 0.8
+      },
+      "encoding": {
+        "x": {
+          "field": "Count",
+          "type": "quantitative"
+        },
+        "color": {
+          "field": "YearLabel",
+          "type": "nominal",
+          "title": null,
+          "scale": {
+            "domain": [
+              "March 2024",
+              "March 2026"
+            ],
+            "range": [
+              "#D17C28",
+              "#147D92"
+            ]
+          },
+          "legend": {
+            "orient": "bottom"
+          }
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "calculate": "max(datum.Count2024, datum.Count2026)",
+          "as": "LabelPosition"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 12,
+        "color": "#34444D",
+        "fontSize": 12
+      },
+      "encoding": {
+        "x": {
+          "field": "LabelPosition",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "ChangeLabel"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelFontSize": 12
+    }
+  }
+}

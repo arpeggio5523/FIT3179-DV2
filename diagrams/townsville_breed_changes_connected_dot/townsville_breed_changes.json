@@ -1,0 +1,50 @@
+[
+  {
+    "Breed": "Maltese Terrier Cross",
+    "Count2024": 1394,
+    "Count2026": 1229,
+    "Change": -165,
+    "ChangeLabel": "-165",
+    "PercentChange": -0.11836441893830703
+  },
+  {
+    "Breed": "Staffordshire Bull Terrier",
+    "Count2024": 1194,
+    "Count2026": 1006,
+    "Change": -188,
+    "ChangeLabel": "-188",
+    "PercentChange": -0.1574539363484087
+  },
+  {
+    "Breed": "Staffordshire Bull Terrier Cross",
+    "Count2024": 1083,
+    "Count2026": 1036,
+    "Change": -47,
+    "ChangeLabel": "-47",
+    "PercentChange": -0.04339796860572484
+  },
+  {
+    "Breed": "Jack Russell Terrier",
+    "Count2024": 655,
+    "Count2026": 653,
+    "Change": -2,
+    "ChangeLabel": "-2",
+    "PercentChange": -0.0030534351145038168
+  },
+  {
+    "Breed": "Dachshund",
+    "Count2024": 504,
+    "Count2026": 534,
+    "Change": 30,
+    "ChangeLabel": "+30",
+    "PercentChange": 0.05952380952380952
+  },
+  {
+    "Breed": "Miniature Dachshund",
+    "Count2024": 354,
+    "Count2026": 460,
+    "Change": 106,
+    "ChangeLabel": "+106",
+    "PercentChange": 0.2994350282485876
+  }
+]
