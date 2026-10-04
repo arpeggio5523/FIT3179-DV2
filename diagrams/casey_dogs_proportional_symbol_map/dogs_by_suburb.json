@@ -1,0 +1,205 @@
+[
+  {
+    "Suburb": "Berwick",
+    "DogCount": 4971,
+    "Longitude": 145.34263756034233,
+    "Latitude": -38.046883260375,
+    "Share": 0.17999131001520746
+  },
+  {
+    "Suburb": "Narre Warren South",
+    "DogCount": 2425,
+    "Longitude": 145.2936476972106,
+    "Latitude": -38.045893153365,
+    "Share": 0.08780505467448765
+  },
+  {
+    "Suburb": "Narre Warren",
+    "DogCount": 2147,
+    "Longitude": 145.30138855973047,
+    "Latitude": -38.024202122915,
+    "Share": 0.07773915562314433
+  },
+  {
+    "Suburb": "Clyde North",
+    "DogCount": 1933,
+    "Longitude": 145.36461302610428,
+    "Latitude": -38.10263996214,
+    "Share": 0.06999058584980809
+  },
+  {
+    "Suburb": "Cranbourne",
+    "DogCount": 1822,
+    "Longitude": 145.26917613638602,
+    "Latitude": -38.12379137072,
+    "Share": 0.06597146788326454
+  },
+  {
+    "Suburb": "Endeavour Hills",
+    "DogCount": 1525,
+    "Longitude": 145.25754633832162,
+    "Latitude": -37.963421388440004,
+    "Share": 0.05521761170251285
+  },
+  {
+    "Suburb": "Cranbourne North",
+    "DogCount": 1522,
+    "Longitude": 145.31448572660713,
+    "Latitude": -38.084375513225,
+    "Share": 0.05510898689260627
+  },
+  {
+    "Suburb": "Cranbourne East",
+    "DogCount": 1415,
+    "Longitude": 145.30755364489178,
+    "Latitude": -38.101082317,
+    "Share": 0.05123470200593816
+  },
+  {
+    "Suburb": "Cranbourne West",
+    "DogCount": 1353,
+    "Longitude": 145.24951017973,
+    "Latitude": -38.10785636938,
+    "Share": 0.04898978926786878
+  },
+  {
+    "Suburb": "Hampton Park",
+    "DogCount": 1233,
+    "Longitude": 145.26687607954213,
+    "Latitude": -38.036293593159996,
+    "Share": 0.044644796871605476
+  },
+  {
+    "Suburb": "Botanic Ridge",
+    "DogCount": 930,
+    "Longitude": 145.26894911417037,
+    "Latitude": -38.14757221344,
+    "Share": 0.03367369107104062
+  },
+  {
+    "Suburb": "Clyde",
+    "DogCount": 866,
+    "Longitude": 145.35267138698987,
+    "Latitude": -38.14086970509,
+    "Share": 0.03135636179303353
+  },
+  {
+    "Suburb": "Narre Warren North",
+    "DogCount": 859,
+    "Longitude": 145.33818618989025,
+    "Latitude": -37.97422067538,
+    "Share": 0.031102903903251503
+  },
+  {
+    "Suburb": "Pearcedale",
+    "DogCount": 777,
+    "Longitude": 145.25333322681774,
+    "Latitude": -38.177417524175,
+    "Share": 0.02813382576580491
+  },
+  {
+    "Suburb": "Cranbourne South",
+    "DogCount": 560,
+    "Longitude": 145.25608323439388,
+    "Latitude": -38.16297051925,
+    "Share": 0.020276631182562097
+  },
+  {
+    "Suburb": "Hallam",
+    "DogCount": 488,
+    "Longitude": 145.27084445917302,
+    "Latitude": -38.000428398075,
+    "Share": 0.017669635744804114
+  },
+  {
+    "Suburb": "Lynbrook",
+    "DogCount": 441,
+    "Longitude": 145.25492723463287,
+    "Latitude": -38.04837660284,
+    "Share": 0.01596784705626765
+  },
+  {
+    "Suburb": "Lyndhurst",
+    "DogCount": 423,
+    "Longitude": 145.25089647828185,
+    "Latitude": -38.0774708185,
+    "Share": 0.015316098196828156
+  },
+  {
+    "Suburb": "Doveton",
+    "DogCount": 353,
+    "Longitude": 145.24087975320566,
+    "Latitude": -37.99098160482,
+    "Share": 0.012781519299007893
+  },
+  {
+    "Suburb": "Tooradin",
+    "DogCount": 301,
+    "Longitude": 145.38952591050398,
+    "Latitude": -38.2104362446,
+    "Share": 0.010898689260627127
+  },
+  {
+    "Suburb": "Devon Meadows",
+    "DogCount": 286,
+    "Longitude": 145.31630862041465,
+    "Latitude": -38.193608165304994,
+    "Share": 0.010355565211094214
+  },
+  {
+    "Suburb": "Junction Village",
+    "DogCount": 202,
+    "Longitude": 145.29228268580033,
+    "Latitude": -38.13624000099,
+    "Share": 0.007314070533709899
+  },
+  {
+    "Suburb": "Blind Bight",
+    "DogCount": 165,
+    "Longitude": 145.34050503182903,
+    "Latitude": -38.212489228820004,
+    "Share": 0.005974364544862046
+  },
+  {
+    "Suburb": "Harkaway",
+    "DogCount": 153,
+    "Longitude": 145.35516160432417,
+    "Latitude": -37.998881925305,
+    "Share": 0.005539865305235716
+  },
+  {
+    "Suburb": "Lysterfield South",
+    "DogCount": 112,
+    "Longitude": 145.26254763461588,
+    "Latitude": -37.948092630800005,
+    "Share": 0.00405532623651242
+  },
+  {
+    "Suburb": "Cannons Creek",
+    "DogCount": 108,
+    "Longitude": 145.30780481326553,
+    "Latitude": -38.205020481,
+    "Share": 0.003910493156636976
+  },
+  {
+    "Suburb": "Eumemmerring",
+    "DogCount": 98,
+    "Longitude": 145.24380035204786,
+    "Latitude": -38.00068531025,
+    "Share": 0.003548410456948367
+  },
+  {
+    "Suburb": "Warneet",
+    "DogCount": 79,
+    "Longitude": 145.31725409416413,
+    "Latitude": -38.22463711173,
+    "Share": 0.00286045332754001
+  },
+  {
+    "Suburb": "Beaconsfield",
+    "DogCount": 71,
+    "Longitude": 145.36790302009018,
+    "Latitude": -38.056450453785004,
+    "Share": 0.002570787167789123
+  }
+]
