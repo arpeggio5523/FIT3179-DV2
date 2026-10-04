@@ -1,0 +1,113 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 600,
+  "height": 500,
+  "projection": {
+    "type": "azimuthalEqualArea",
+    "rotate": [
+      -145.360833,
+      38.066667,
+      0
+    ]
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "diagrams/casey_dogs_proportional_symbol_map/casey_suburbs.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#edf0ed",
+        "stroke": "#aab7af",
+        "strokeWidth": 0.8
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "properties.Suburb",
+            "type": "nominal",
+            "title": "Suburb"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "diagrams/casey_dogs_proportional_symbol_map/dogs_by_suburb.json"
+      },
+      "mark": {
+        "type": "circle",
+        "color": "#147D92",
+        "opacity": 0.7,
+        "stroke": "white",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "longitude": {
+          "field": "Longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "Latitude",
+          "type": "quantitative"
+        },
+        "size": {
+          "field": "DogCount",
+          "type": "quantitative",
+          "title": "Dog records",
+          "scale": {
+            "type": "linear",
+            "domain": [
+              0,
+              5000
+            ],
+            "range": [
+              0,
+              2200
+            ]
+          },
+          "legend": {
+            "orient": "bottom",
+            "values": [
+              500,
+              2000,
+              5000
+            ]
+          }
+        },
+        "order": {
+          "field": "DogCount",
+          "type": "quantitative",
+          "sort": "descending"
+        },
+        "tooltip": [
+          {
+            "field": "Suburb",
+            "type": "nominal"
+          },
+          {
+            "field": "DogCount",
+            "type": "quantitative",
+            "title": "Dog records",
+            "format": ",d"
+          },
+          {
+            "field": "Share",
+            "type": "quantitative",
+            "title": "Share of dog records",
+            "format": ".1%"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}
