@@ -72,4 +72,20 @@ h2 {
   main {
     padding: 20px 16px;
   }
+
+#council-breed-treemap {
+  width: 100%;
+  min-width: 0;
+  margin: 20px 0;
+}
+
+#council-breed-treemap.vega-embed {
+  display: block;
+  padding: 0;
+}
+
+#council-breed-treemap svg {
+  display: block;
+  max-width: 100%;
+}
 }

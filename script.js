@@ -46,6 +46,71 @@ async function renderChart(selector, specUrl) {
   }
 }
 
+
+async function renderCouncilBreedTreemap() {
+  const container = document.querySelector(
+    "#council-breed-treemap"
+  );
+
+  if (!container) return;
+
+  container.textContent = "Loading treemap…";
+  container.setAttribute("aria-busy", "true");
+
+  try {
+    const specUrl =
+      "diagrams/council_breed_treemap/council_breed_treemap.json";
+
+    const response = await fetch(specUrl);
+
+    if (!response.ok) {
+      throw new Error(`Could not load ${specUrl}`);
+    }
+
+    const spec = await response.json();
+    spec.width = Math.max(1, Math.floor(container.clientWidth));
+
+    container.textContent = "";
+
+    const result = await vegaEmbed(container, spec, {
+      mode: "vega",
+      renderer: "svg",
+      actions: false
+    });
+
+    let previousWidth = spec.width;
+    let resizeFrame;
+
+    const observer = new ResizeObserver(() => {
+      const nextWidth = Math.floor(container.clientWidth);
+
+      if (nextWidth <= 0 || nextWidth === previousWidth) {
+        return;
+      }
+
+      previousWidth = nextWidth;
+      cancelAnimationFrame(resizeFrame);
+
+      resizeFrame = requestAnimationFrame(() => {
+        result.view
+          .width(nextWidth)
+          .resize()
+          .runAsync()
+          .catch(console.error);
+      });
+    });
+
+    observer.observe(container);
+  } catch (error) {
+    console.error(error);
+    container.textContent =
+      `Treemap could not load: ${error.message}`;
+  } finally {
+    container.setAttribute("aria-busy", "false");
+  }
+}
+
+renderCouncilBreedTreemap();
 renderChart("#breed-chart", "diagrams/top10_dogs_lollipop/dog_chart.json");
 renderChart("#registration-heatmap", "diagrams/group_registrations_heatmap/registration_heatmap.json");
 
@@ -61,7 +126,4 @@ vegaEmbed(
   "diagrams/townsville_breed_changes_connected_dot/townsville_connected_dots.json"
 ).catch(console.error);
 
-vegaEmbed(
-  "#townsville-decline-map",
-  "diagrams/townsville_dog_decline_choropleth/townsville_decline_map.json"
-).catch(console.error);
+

@@ -11,24 +11,45 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 </head>
+
 <body>
   <main>
-    <h1>Which dog breeds lead the list?</h1>
+    <h1>Top 10 Dog Breeds and Crossbreeds in South Australia</h1>
 
     <p>
-      Compare the recorded counts for the ten selected breed
-      categories. Hover over a dot to see its exact value.
+      Compare the ten most common breed and crossbreed entries among dogs
+      recorded as “At Home” in Dogs and Cats Online (DACO), as at
+      30 May 2025. Hover over a dot to see its exact value.
     </p>
 
     <div class="chart-scroll">
-      <div id="breed-chart" class="chart" aria-label="Recorded counts by dog breed"></div>
+      <div
+        id="breed-chart"
+        class="chart"
+        aria-label="Top ten dog breeds and crossbreeds in South Australia by number of dogs recorded as At Home in DACO on 30 May 2025">
+      </div>
     </div>
 
     <p class="note">
-      Australian Kelpie and Border Collie lead these selected
-      categories, with recorded counts of 18,107 and 17,353.
+      Australian Kelpie and Border Collie lead the list,
+      with 18,107 and 17,353 dogs respectively.
       The gap between them is 754, compared with a gap of 4,289
       between Border Collie and third-placed Labrador Retriever.
+    </p>
+
+    <p class="note">
+      The top ten were selected from 2,738 breed and crossbreed entries,
+      representing 331,557 dogs in total. Crossbreed entries are kept separate.
+      “At Home” is a recorded DACO status, not a measure of new registrations
+      during the year.
+    </p>
+
+    <p class="note">
+      Source: Dog and Cat Management Board,
+      <a href="https://data.sa.gov.au/data/dataset/dogs-and-cats-online-data-2024-2025/resource/4d2e475e-be8b-4d97-ae32-fa76b6a4904b">
+        Most Popular in SA 2025-05-30
+      </a>,
+      “Dog Breeds - SA” worksheet. Data extracted on 30 May 2025.
     </p>
 
     <h2>Registration changes across dog groups</h2>
@@ -40,7 +61,11 @@
     </p>
 
     <div class="chart-scroll">
-      <div id="registration-heatmap" class="chart" aria-label="Registration changes by dog group and year"></div>
+      <div
+        id="registration-heatmap"
+        class="chart"
+        aria-label="Registration changes by dog group and year">
+      </div>
     </div>
 
     <p id="registration-summary">
@@ -49,7 +74,6 @@
       at 56.1%, compared with 15.0% for Gundogs.
     </p>
 
-    <!-- MAP SECTION GOES HERE -->
     <section aria-labelledby="map-heading">
       <h2 id="map-heading">
         Paws on the Map: Where Are Casey’s Dog Records Concentrated?
@@ -63,7 +87,12 @@
       </p>
 
       <div class="chart-scroll">
-        <div id="dog-map" class="chart" role="img" aria-label="Dog registration records by suburb in Casey"></div>
+        <div
+          id="dog-map"
+          class="chart"
+          role="img"
+          aria-label="Dog registration records by suburb in Casey">
+        </div>
       </div>
 
       <p>
@@ -87,75 +116,253 @@
         </a>.
       </p>
     </section>
+
     <section aria-labelledby="townsville-ranks-heading">
-      <h2 id="townsville-ranks-heading">How have breed rankings changed in Townsville?</h2>
-      <p>
-        Follow six selected breed categories across the March snapshots
-        for 2024, 2025, and 2026. Smaller rank numbers indicate higher rankings.
-        Hover over a point to see its rank and recorded count.
-      </p>
-      <div class="chart-scroll">
-        <div id="townsville-bump" class="chart" aria-label="Selected dog breed rankings in Townsville from 2024 to 2026"></div>
-      </div>
-    </section>
-
-    <section aria-labelledby="townsville-counts-heading">
-      <h2 id="townsville-counts-heading">How have Townsville's breed counts changed?</h2>
-      <p>
-        Compare March 2024 (orange) with March 2026 (blue)
-        across six selected breed categories.
-        Each line connects the two recorded counts for a breed category.
-        Hover over a dot for the exact counts and percentage change.
-      </p>
-      <div class="chart-scroll">
-        <div id="townsville-connected-dots" class="chart" aria-label="Selected dog breed counts in Townsville in 2024 and 2026"></div>
-      </div>
-    </section>
-
-    <section aria-labelledby="townsville-map-heading">
-      <h2 id="townsville-map-heading">
-        Fewer Records Across Townsville: Where Were the Declines Largest?
+      <h2 id="townsville-ranks-heading">
+        How have breed rankings changed in Townsville?
       </h2>
 
       <p>
-        All ten electoral divisions had fewer dog registration records
-        in March 2026 than in March 2024. Darker orange indicates a
-        larger percentage decline. Hover over a division to compare
-        its counts.
+        Follow changes in dog breed rankings across the March snapshots
+        from 2023 to 2026. Six focus breeds are highlighted in colour,
+        while grey lines show other breeds that reached the top 35
+        during this period.
       </p>
 
-      <div
-        id="townsville-decline-map"
-        aria-label="Percentage decline in Townsville dog registration records by electoral division">
+      <div class="chart-scroll">
+        <div
+          id="townsville-bump"
+          class="chart"
+          aria-label="Townsville dog breed rankings from March 2023 to March 2026, with six breeds highlighted and ranks worse than 35 displayed at 35">
+        </div>
       </div>
 
       <p>
-        Division 5 recorded the largest proportional decline at 11.0%,
-        compared with 5.4% in Division 8. Although every division
-        recorded a decrease, the size of that decrease varied.
+        <strong>Miniature Dachshund climbed from 32nd to 13th.</strong>
+        Its recorded count increased from 268 in March 2023 to 460
+        in March 2026. Dachshund also improved its position,
+        moving from 15th to 12th.
+      </p>
+
+      <p>
+        <strong>Maltese Terrier Cross remained first throughout
+        the four snapshots.</strong>
+        Staffordshire Bull Terrier fell from second to fourth,
+        while Staffordshire Bull Terrier Cross rose from fourth
+        to third. The two tied in 2025 before switching positions
+        in 2026.
       </p>
 
       <p class="note">
-        Numbers identify electoral divisions. The enlarged view below
-        the overview shows divisions 5–9 using the same colour scale.
+        Source:
+        <a
+          href="https://data.gov.au/data/dataset/tcc-animal-registrations"
+          target="_blank"
+          rel="noopener noreferrer">
+          Townsville City Council — Animal Registrations
+        </a>,
+        March snapshots, 2023–2026. Counts describe registration
+        records; changes do not necessarily represent equivalent
+        changes in the actual dog population.
+      </p>
+    </section>
+
+    <section aria-labelledby="townsville-counts-heading">
+      <h2 id="townsville-counts-heading">
+        How have Townsville's breed counts changed?
+      </h2>
+
+      <p>
+        Compare March 2023 (orange) with March 2026 (blue).
+        Each line connects the two recorded counts for a breed.
+        Hover for exact counts and percentage changes.
+      </p>
+
+      <div class="chart-scroll">
+        <div
+          id="townsville-connected-dots"
+          class="chart"
+          aria-label="Selected dog breed counts in Townsville in March 2023 and March 2026">
+        </div>
+      </div>
+
+      <p>
+        <strong>Miniature Dachshund recorded the strongest growth
+        among these six breeds.</strong>
+        Its count rose from 268 to 460, an increase of 71.6%.
+        Staffordshire Bull Terrier moved in the opposite direction,
+        falling by 299 records (22.9%).
       </p>
 
       <p class="note">
-        Dogs only. Counts use the division assignments recorded in each
-        March snapshot. Changes in registration records do not necessarily
-        represent equivalent changes in the actual dog population.
+        Source:
+        <a
+          href="https://data.gov.au/data/dataset/tcc-animal-registrations"
+          target="_blank"
+          rel="noopener noreferrer">
+          Townsville City Council — Animal Registrations
+        </a>,
+        March 2023 and March 2026. Original breed categories are
+        retained; crossbreeds are counted separately.
+      </p>
+    </section>
+
+    <section aria-labelledby="townsville-map-heading">
+  <h2 id="townsville-map-heading">
+    How Are Townsville’s Dog Records Distributed?
+  </h2>
+
+  <p>
+    Townsville recorded <strong>26,034 dogs in March 2026</strong>.
+    Division 1 had the most records (3,332), compared with 2,005
+    in Division 3. Each dot represents approximately 50 records,
+    allowing the totals to be compared across divisions.
+  </p>
+
+  <div class="chart-scroll">
+    <div
+      id="townsville-dot-map"
+      aria-label="Dot-density map of Townsville dog records by electoral division, March 2026">
+    </div>
+  </div>
+
+  <p class="note">
+    One dot represents approximately 50 records, rounded within each
+    division. Dot positions are illustrative: they are randomly
+    allocated inside division boundaries, not placed at actual
+    addresses or restricted to residential land. Read the pattern
+    at division level, not as neighbourhood locations.
+  </p>
+
+  <p class="note">
+    Numbers identify divisions. The enlarged view repeats divisions
+    5–9 with the same dot value. Hover for exact counts.
+  </p>
+
+  <p class="note">
+    Sources:
+    <a
+      href="https://data.gov.au/data/dataset/tcc-animal-registrations"
+      target="_blank"
+      rel="noopener noreferrer">
+      Townsville City Council — Animal Registrations
+    </a>
+    (March 2026), and
+    <a
+      href="https://maps.townsville.qld.gov.au/arcgis/rest/services/PUB_Core/PUB_Core/MapServer/5"
+      target="_blank"
+      rel="noopener noreferrer">
+      Townsville electoral division boundaries
+    </a>.
+    Registration records do not necessarily equal the actual dog population.
+  </p>
+</section>
+
+    <section aria-labelledby="sa-ownership-heading">
+      <h2 id="sa-ownership-heading">
+        Where Is Owning More Than One Dog More Common?
+      </h2>
+
+      <p>
+        Among recorded dog owners, <strong>41.9% in Adelaide Plains
+        had two or more dogs</strong>, compared with 12.5% in the
+        City of Adelaide. Darker shading reveals where multiple-dog
+        ownership is more common, rather than simply where more
+        owners live.
+      </p>
+
+      <div class="chart-scroll">
+        <div
+          id="sa-ownership-map"
+          aria-label="South Australian councils coloured by the percentage of recorded dog owners with two or more dogs, May 2025">
+        </div>
+      </div>
+
+      <p class="note">
+        Percentage = recorded owners with two or more dogs ÷ recorded
+        owners with at least one dog × 100. These are owner records,
+        not households or the percentage of all residents who own dogs.
+        The data alone does not explain why ownership patterns differ.
       </p>
 
       <p class="note">
-        Sources: Townsville City Council Animal Registrations,
-        March 2024 and March 2026;
-        <a href="https://maps.townsville.qld.gov.au/arcgis/rest/services/PUB_Core/PUB_Core/MapServer/5">
-          Townsville City Council divisional boundaries
+        Data extracted 30 May 2025, covering DACO records with status
+        “At Home”. Council refers to the owner's residence.
+        Interstate and Outback Communities Authority records are
+        excluded from the council comparison. Grey areas have no
+        matched owner data; grey does not mean zero.
+      </p>
+
+      <p class="note">
+        Sources:
+        <a
+          href="https://data.sa.gov.au/data/dataset/11b13cf9-e361-4625-850c-f703e27a146b/resource/36a83a40-36e8-4dc2-9c25-16028702bb4d/download/data_sa_owners-2025-05-30.xlsx"
+          target="_blank"
+          rel="noopener noreferrer">
+          Dogs and Cats Online — owner data, 30 May 2025 (Excel)
+        </a>;
+        <a
+          href="https://geo.abs.gov.au/arcgis/rest/services/ASGS2025/LGA/FeatureServer/1"
+          target="_blank"
+          rel="noopener noreferrer">
+          Australian Bureau of Statistics — 2025 LGA boundaries
         </a>.
+      </p>
+    </section>
+
+
+    <section aria-labelledby="council-treemap-heading">
+      <h2 id="council-treemap-heading">
+        Which Breeds Are Favourites Across the Most Councils?
+      </h2>
+
+      <p>
+        <strong>Border Collies appear in the top five of 63 out of
+        68 councils</strong>—more than any other breed.
+        Australian Kelpies and Maltese Crosses each appear in 47.
+        This shows how widely breeds feature among local favourites,
+        rather than how many dogs are recorded statewide.
+      </p>
+
+      <p class="note">
+        Larger rectangles mean more council top-five appearances.
+        Teal highlights the five most frequently listed breeds.
+        Hover over any rectangle, including the smaller ones, for details.
+      </p>
+
+      <div
+        id="council-breed-treemap"
+        aria-label="Treemap showing how many South Australian councils include each breed in their top five">
+      </div>
+
+      <p class="note">
+        Each council contributes five appearances, giving 340 in total.
+        First through fifth place each contribute one appearance.
+        Rectangle area represents a share of these 340 appearances;
+        the tooltip separately shows the percentage of 68 councils.
+        Neither measure is a percentage of dogs.
+      </p>
+
+      <p class="note">
+        Interstate Council and Outback Communities Authority are excluded.
+        Breed categories are retained as published.
+      </p>
+
+      <p class="note">
+        Source:
+        <a
+          href="https://data.sa.gov.au/data/dataset/11b13cf9-e361-4625-850c-f703e27a146b/resource/a8a80a42-0b54-473e-b34e-e032795e2bc4/download/top-5-dog-breeds-by-council-2025-05-30.xlsx"
+          target="_blank"
+          rel="noopener noreferrer">
+          Dogs and Cats Online — Top 5 Dog Breeds by Council (Excel)
+        </a>.
+        The filename is dated 30 May 2025, but the workbook notes state
+        30 May 2024; the snapshot date is therefore uncertain.
       </p>
     </section>
   </main>
 
   <script src="script.js"></script>
+  <script src="maps_update.js"></script>
 </body>
 </html>
