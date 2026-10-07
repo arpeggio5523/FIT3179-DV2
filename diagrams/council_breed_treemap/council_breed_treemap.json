@@ -1,0 +1,207 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Breed appearances in the top-five lists of 68 South Australian councils. Rectangle area and colour luminance encode the number of council appearances.",
+  "width": 780,
+  "height": 480,
+  "padding": 4,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "data": [
+    {
+      "name": "breeds",
+      "url": "diagrams/council_breed_treemap/council_breed_appearances.csv",
+      "format": {
+        "type": "csv",
+        "parse": {
+          "Appearances": "number"
+        }
+      },
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "datum.Breed",
+          "as": "id"
+        },
+        {
+          "type": "formula",
+          "expr": "'root'",
+          "as": "parent"
+        }
+      ]
+    },
+    {
+      "name": "treeRoot",
+      "values": [
+        {
+          "id": "root",
+          "parent": null,
+          "Appearances": 0
+        }
+      ]
+    },
+    {
+      "name": "tree",
+      "source": ["treeRoot", "breeds"],
+      "transform": [
+        {
+          "type": "stratify",
+          "key": "id",
+          "parentKey": "parent"
+        },
+        {
+          "type": "treemap",
+          "field": "Appearances",
+          "sort": {
+            "field": "value",
+            "order": "descending"
+          },
+          "method": "squarify",
+          "ratio": 1,
+          "paddingInner": 2,
+          "paddingOuter": 0,
+          "round": false,
+          "size": [
+            { "signal": "width" },
+            { "signal": "height" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "leaves",
+      "source": "tree",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.depth === 1"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "appearanceColour",
+      "type": "linear",
+      "domain": [0, 68],
+      "range": ["#EFF3FF", "#08519C"],
+      "zero": true,
+      "clamp": true
+    }
+  ],
+  "legends": [
+    {
+      "fill": "appearanceColour",
+      "type": "gradient",
+      "title": "Councils listing the breed in their top five",
+      "orient": "bottom",
+      "direction": "horizontal",
+      "gradientLength": 260,
+      "gradientThickness": 12,
+      "values": [0, 17, 34, 51, 68],
+      "format": "d",
+      "titleFont": "Arial",
+      "titleFontSize": 12,
+      "labelFont": "Arial",
+      "labelFontSize": 11
+    }
+  ],
+  "marks": [
+    {
+      "name": "tiles",
+      "type": "rect",
+      "from": {
+        "data": "leaves"
+      },
+      "encode": {
+        "update": {
+          "x": { "field": "x0" },
+          "y": { "field": "y0" },
+          "x2": { "field": "x1" },
+          "y2": { "field": "y1" },
+          "stroke": { "value": "white" },
+          "strokeWidth": { "value": 1 },
+          "fill": {
+            "scale": "appearanceColour",
+            "field": "Appearances"
+          },
+          "tooltip": {
+            "signal": "{'Breed': datum.Breed, 'Councils listing this breed in their top five': datum.Appearances + ' of 68', 'Percentage of councils': format(datum.Appearances / 68, '.1%'), 'Share of 340 top-five appearances': format(datum.Appearances / 340, '.1%')}"
+          }
+        },
+        "hover": {
+          "stroke": { "value": "#172B4D" },
+          "strokeWidth": { "value": 2 }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {
+        "data": "leaves"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "datum.x0 + 8"
+          },
+          "y": {
+            "signal": "datum.y0 + 10"
+          },
+          "text": {
+            "signal": "split(datum.Label, '|')"
+          },
+          "font": { "value": "Arial" },
+          "fontSize": { "value": 12 },
+          "fontWeight": { "value": "bold" },
+          "lineHeight": { "value": 14 },
+          "baseline": { "value": "top" },
+          "fill": {
+            "signal": "datum.Appearances >= 40 ? '#FFFFFF' : '#243238'"
+          },
+          "limit": {
+            "signal": "max(0, datum.x1 - datum.x0 - 16)"
+          },
+          "opacity": {
+            "signal": "datum.x1 - datum.x0 >= 90 && datum.y1 - datum.y0 >= 85 ? 1 : 0"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {
+        "data": "leaves"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "datum.x0 + 8"
+          },
+          "y": {
+            "signal": "datum.y1 - 10"
+          },
+          "text": {
+            "signal": "datum.Appearances + (datum.Appearances === 1 ? ' council' : ' councils')"
+          },
+          "font": { "value": "Arial" },
+          "fontSize": { "value": 11 },
+          "baseline": { "value": "bottom" },
+          "fill": {
+            "signal": "datum.Appearances >= 40 ? '#FFFFFF' : '#243238'"
+          },
+          "limit": {
+            "signal": "max(0, datum.x1 - datum.x0 - 16)"
+          },
+          "opacity": {
+            "signal": "datum.x1 - datum.x0 >= 75 && datum.y1 - datum.y0 >= 35 ? 1 : 0"
+          }
+        }
+      }
+    }
+  ]
+}
