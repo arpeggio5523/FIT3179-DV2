@@ -1,34 +1,38 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "width": 430,
-  "height": {
-    "step": 48
-  },
+  "height": {"step": 48},
   "data": {
     "url": "diagrams/townsville_breed_changes_connected_dot/townsville_breed_changes.json"
   },
+  "transform": [
+    {
+      "calculate": "datum.Count2026 - datum.Count2023",
+      "as": "Change"
+    },
+    {
+      "calculate": "datum.Change / datum.Count2023",
+      "as": "PercentChange"
+    },
+    {
+      "calculate": "format(datum.Change, '+,d')",
+      "as": "ChangeLabel"
+    }
+  ],
   "encoding": {
     "y": {
       "field": "Breed",
       "type": "nominal",
-      "sort": {
-        "field": "Change",
-        "order": "ascending"
-      },
+      "sort": {"field": "Change", "order": "ascending"},
       "title": null,
-      "axis": {
-        "labelLimit": 270
-      }
+      "axis": {"labelLimit": 270}
     },
     "tooltip": [
+      {"field": "Breed", "type": "nominal", "title": "Breed"},
       {
-        "field": "Breed",
-        "type": "nominal"
-      },
-      {
-        "field": "Count2024",
+        "field": "Count2023",
         "type": "quantitative",
-        "title": "March 2024",
+        "title": "March 2023",
         "format": ",d"
       },
       {
@@ -60,38 +64,23 @@
       },
       "encoding": {
         "x": {
-          "field": "Count2024",
+          "field": "Count2023",
           "type": "quantitative",
           "title": "Dog registration records",
-          "scale": {
-            "domain": [
-              0,
-              1600
-            ]
-          },
-          "axis": {
-            "format": ",d"
-          }
+          "scale": {"domain": [0, 1600]},
+          "axis": {"format": ",d"}
         },
-        "x2": {
-          "field": "Count2026"
-        }
+        "x2": {"field": "Count2026"}
       }
     },
     {
       "transform": [
         {
-          "fold": [
-            "Count2024",
-            "Count2026"
-          ],
-          "as": [
-            "Snapshot",
-            "Count"
-          ]
+          "fold": ["Count2023", "Count2026"],
+          "as": ["Snapshot", "Count"]
         },
         {
-          "calculate": "datum.Snapshot === 'Count2024' ? 'March 2024' : 'March 2026'",
+          "calculate": "datum.Snapshot === 'Count2023' ? 'March 2023' : 'March 2026'",
           "as": "YearLabel"
         }
       ],
@@ -113,25 +102,17 @@
           "type": "nominal",
           "title": null,
           "scale": {
-            "domain": [
-              "March 2024",
-              "March 2026"
-            ],
-            "range": [
-              "#D17C28",
-              "#147D92"
-            ]
+            "domain": ["March 2023", "March 2026"],
+            "range": ["#D17C28", "#147D92"]
           },
-          "legend": {
-            "orient": "bottom"
-          }
+          "legend": {"orient": "bottom"}
         }
       }
     },
     {
       "transform": [
         {
-          "calculate": "max(datum.Count2024, datum.Count2026)",
+          "calculate": "max(datum.Count2023, datum.Count2026)",
           "as": "LabelPosition"
         }
       ],
@@ -147,18 +128,12 @@
           "field": "LabelPosition",
           "type": "quantitative"
         },
-        "text": {
-          "field": "ChangeLabel"
-        }
+        "text": {"field": "ChangeLabel"}
       }
     }
   ],
   "config": {
-    "view": {
-      "stroke": null
-    },
-    "axis": {
-      "labelFontSize": 12
-    }
+    "view": {"stroke": null},
+    "axis": {"labelFontSize": 12}
   }
 }
