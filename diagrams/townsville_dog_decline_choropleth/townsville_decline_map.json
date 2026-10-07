@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Dog records only. Decline = (March 2024 count - March 2026 count) / March 2024 count. Division assignments are used as recorded. Overview plus enlargement of divisions 5-9.",
+  "description": "Dog registration records, March 2023 versus March 2026. Decline is calculated relative to March 2023. Division assignments are used as recorded.",
   "data": {
     "url": "diagrams/townsville_dog_decline_choropleth/townsville_dog_decline.geojson",
     "format": {
@@ -8,20 +8,81 @@
       "property": "features"
     }
   },
+  "transform": [
+    {
+      "lookup": "properties.Division",
+      "from": {
+        "data": {
+          "values": [
+            {"Division": 1, "Dogs2023": 3590},
+            {"Division": 2, "Dogs2023": 3168},
+            {"Division": 3, "Dogs2023": 2126},
+            {"Division": 4, "Dogs2023": 3191},
+            {"Division": 5, "Dogs2023": 2811},
+            {"Division": 6, "Dogs2023": 2561},
+            {"Division": 7, "Dogs2023": 3023},
+            {"Division": 8, "Dogs2023": 2758},
+            {"Division": 9, "Dogs2023": 2330},
+            {"Division": 10, "Dogs2023": 2950}
+          ]
+        },
+        "key": "Division",
+        "fields": ["Dogs2023"]
+      }
+    },
+    {
+      "calculate": "datum.Dogs2023 - datum.properties.Dogs2026",
+      "as": "Decrease2023"
+    },
+    {
+      "calculate": "datum.Decrease2023 / datum.Dogs2023",
+      "as": "DeclineRate2023"
+    }
+  ],
   "vconcat": [
     {
       "title": {
         "text": "Townsville: all 10 divisions",
+        "subtitle": "Percentage decline in dog records, March 2023–2026",
         "anchor": "start"
       },
       "width": 600,
       "height": 470,
       "projection": {
         "type": "azimuthalEqualArea",
-        "rotate": [
-          -146.633333,
-          19.35,
-          0
+        "rotate": [-146.633333, 19.35, 0]
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "properties.DivisionName",
+            "type": "nominal",
+            "title": "Electoral division"
+          },
+          {
+            "field": "Dogs2023",
+            "type": "quantitative",
+            "title": "March 2023 dog records",
+            "format": ",d"
+          },
+          {
+            "field": "properties.Dogs2026",
+            "type": "quantitative",
+            "title": "March 2026 dog records",
+            "format": ",d"
+          },
+          {
+            "field": "Decrease2023",
+            "type": "quantitative",
+            "title": "Fewer records",
+            "format": ",d"
+          },
+          {
+            "field": "DeclineRate2023",
+            "type": "quantitative",
+            "title": "Percentage decline",
+            "format": ".1%"
+          }
         ]
       },
       "layer": [
@@ -33,17 +94,11 @@
           },
           "encoding": {
             "color": {
-              "field": "properties.DeclineRate",
+              "field": "DeclineRate2023",
               "type": "quantitative",
               "scale": {
-                "domain": [
-                  0,
-                  0.12
-                ],
-                "range": [
-                  "#FFF4E8",
-                  "#A63603"
-                ],
+                "domain": [0, 0.15],
+                "range": ["#FFF4E8", "#A63603"],
                 "clamp": true
               },
               "legend": {
@@ -52,46 +107,9 @@
                 "orient": "bottom",
                 "direction": "horizontal",
                 "gradientLength": 280,
-                "values": [
-                  0,
-                  0.03,
-                  0.06,
-                  0.09,
-                  0.12
-                ]
+                "values": [0, 0.03, 0.06, 0.09, 0.12, 0.15]
               }
-            },
-            "tooltip": [
-              {
-                "field": "properties.DivisionName",
-                "type": "nominal",
-                "title": "Electoral division"
-              },
-              {
-                "field": "properties.Dogs2024",
-                "type": "quantitative",
-                "title": "March 2024 dog records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.Dogs2026",
-                "type": "quantitative",
-                "title": "March 2026 dog records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.Decrease",
-                "type": "quantitative",
-                "title": "Fewer records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.DeclineRate",
-                "type": "quantitative",
-                "title": "Percentage decline",
-                "format": ".1%"
-              }
-            ]
+            }
           }
         },
         {
@@ -110,40 +128,7 @@
               "field": "properties.LabelLatitude",
               "type": "quantitative"
             },
-            "text": {
-              "field": "properties.Division"
-            },
-            "tooltip": [
-              {
-                "field": "properties.DivisionName",
-                "type": "nominal",
-                "title": "Electoral division"
-              },
-              {
-                "field": "properties.Dogs2024",
-                "type": "quantitative",
-                "title": "March 2024 dog records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.Dogs2026",
-                "type": "quantitative",
-                "title": "March 2026 dog records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.Decrease",
-                "type": "quantitative",
-                "title": "Fewer records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.DeclineRate",
-                "type": "quantitative",
-                "title": "Percentage decline",
-                "format": ".1%"
-              }
-            ]
+            "text": {"field": "properties.Division"}
           }
         }
       ]
@@ -157,10 +142,44 @@
       "height": 290,
       "projection": {
         "type": "azimuthalEqualArea",
-        "rotate": [
-          -146.633333,
-          19.35,
-          0
+        "rotate": [-146.633333, 19.35, 0]
+      },
+      "transform": [
+        {
+          "filter": "datum.properties.Division >= 5 && datum.properties.Division <= 9"
+        }
+      ],
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "properties.DivisionName",
+            "type": "nominal",
+            "title": "Electoral division"
+          },
+          {
+            "field": "Dogs2023",
+            "type": "quantitative",
+            "title": "March 2023 dog records",
+            "format": ",d"
+          },
+          {
+            "field": "properties.Dogs2026",
+            "type": "quantitative",
+            "title": "March 2026 dog records",
+            "format": ",d"
+          },
+          {
+            "field": "Decrease2023",
+            "type": "quantitative",
+            "title": "Fewer records",
+            "format": ",d"
+          },
+          {
+            "field": "DeclineRate2023",
+            "type": "quantitative",
+            "title": "Percentage decline",
+            "format": ".1%"
+          }
         ]
       },
       "layer": [
@@ -172,17 +191,11 @@
           },
           "encoding": {
             "color": {
-              "field": "properties.DeclineRate",
+              "field": "DeclineRate2023",
               "type": "quantitative",
               "scale": {
-                "domain": [
-                  0,
-                  0.12
-                ],
-                "range": [
-                  "#FFF4E8",
-                  "#A63603"
-                ],
+                "domain": [0, 0.15],
+                "range": ["#FFF4E8", "#A63603"],
                 "clamp": true
               },
               "legend": {
@@ -191,46 +204,9 @@
                 "orient": "bottom",
                 "direction": "horizontal",
                 "gradientLength": 280,
-                "values": [
-                  0,
-                  0.03,
-                  0.06,
-                  0.09,
-                  0.12
-                ]
+                "values": [0, 0.03, 0.06, 0.09, 0.12, 0.15]
               }
-            },
-            "tooltip": [
-              {
-                "field": "properties.DivisionName",
-                "type": "nominal",
-                "title": "Electoral division"
-              },
-              {
-                "field": "properties.Dogs2024",
-                "type": "quantitative",
-                "title": "March 2024 dog records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.Dogs2026",
-                "type": "quantitative",
-                "title": "March 2026 dog records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.Decrease",
-                "type": "quantitative",
-                "title": "Fewer records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.DeclineRate",
-                "type": "quantitative",
-                "title": "Percentage decline",
-                "format": ".1%"
-              }
-            ]
+            }
           }
         },
         {
@@ -249,62 +225,18 @@
               "field": "properties.LabelLatitude",
               "type": "quantitative"
             },
-            "text": {
-              "field": "properties.Division"
-            },
-            "tooltip": [
-              {
-                "field": "properties.DivisionName",
-                "type": "nominal",
-                "title": "Electoral division"
-              },
-              {
-                "field": "properties.Dogs2024",
-                "type": "quantitative",
-                "title": "March 2024 dog records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.Dogs2026",
-                "type": "quantitative",
-                "title": "March 2026 dog records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.Decrease",
-                "type": "quantitative",
-                "title": "Fewer records",
-                "format": ",d"
-              },
-              {
-                "field": "properties.DeclineRate",
-                "type": "quantitative",
-                "title": "Percentage decline",
-                "format": ".1%"
-              }
-            ]
+            "text": {"field": "properties.Division"}
           }
-        }
-      ],
-      "transform": [
-        {
-          "filter": "datum.properties.Division >= 5 && datum.properties.Division <= 9"
         }
       ]
     }
   ],
   "resolve": {
-    "scale": {
-      "color": "shared"
-    }
+    "scale": {"color": "shared"}
   },
   "spacing": 24,
   "config": {
-    "view": {
-      "stroke": null
-    },
-    "title": {
-      "fontSize": 15
-    }
+    "view": {"stroke": null},
+    "title": {"fontSize": 15}
   }
 }

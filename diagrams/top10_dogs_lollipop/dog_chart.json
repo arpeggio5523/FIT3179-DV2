@@ -2,16 +2,23 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "title": {
     "text": "Australian Kelpie and Border Collie lead the list",
-    "subtitle": "Recorded counts for the ten selected breed categories",
+    "subtitle": [
+      "Top 10 breeds and crossbreeds in South Australia",
+      "DACO “At Home” records · 30 May 2025"
+    ],
     "anchor": "start"
   },
   "width": 500,
-  "height": {"step": 36},
+  "height": {
+    "step": 36
+  },
   "data": {
     "url": "diagrams/top10_dogs_lollipop/top10_dogs.csv",
     "format": {
       "type": "csv",
-      "parse": {"Count": "number"}
+      "parse": {
+        "Count": "number"
+      }
     }
   },
   "encoding": {
@@ -30,8 +37,10 @@
     "x": {
       "field": "Count",
       "type": "quantitative",
-      "title": "Recorded count",
-      "scale": {"domain": [0, 21000]},
+      "title": "Number of dogs",
+      "scale": {
+        "domain": [0, 21000]
+      },
       "axis": {
         "format": ",d",
         "tickCount": 5,
@@ -42,12 +51,12 @@
       {
         "field": "Breed",
         "type": "nominal",
-        "title": "Breed"
+        "title": "Breed / crossbreed"
       },
       {
         "field": "Count",
         "type": "quantitative",
-        "title": "Recorded count",
+        "title": "Dogs recorded as At Home",
         "format": ",d"
       }
     ]
@@ -60,7 +69,9 @@
         "color": "#B8C2C7"
       },
       "encoding": {
-        "x2": {"datum": 0}
+        "x2": {
+          "datum": 0
+        }
       }
     },
     {
@@ -99,7 +110,11 @@
     }
   ],
   "config": {
-    "view": {"stroke": null},
-    "axis": {"gridColor": "#E8ECEF"}
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "gridColor": "#E8ECEF"
+    }
   }
 }
