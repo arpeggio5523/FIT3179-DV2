@@ -1,0 +1,57 @@
+State,Outcome,Count,StateOrder,OutcomeOrder
+Australian Capital Territory,Rehomed,310,5,0
+Australian Capital Territory,Reclaimed,109,5,1
+Australian Capital Territory,Euthanased,36,5,2
+Australian Capital Territory,Currently in care,60,5,3
+Australian Capital Territory,Returned,75,5,4
+Australian Capital Territory,Transferred,5,5,5
+Australian Capital Territory,Other,0,5,6
+New South Wales,Rehomed,119,7,0
+New South Wales,Reclaimed,0,7,1
+New South Wales,Euthanased,14,7,2
+New South Wales,Currently in care,53,7,3
+New South Wales,Returned,18,7,4
+New South Wales,Transferred,0,7,5
+New South Wales,Other,0,7,6
+Northern Territory,Rehomed,1350,1,0
+Northern Territory,Reclaimed,229,1,1
+Northern Territory,Euthanased,878,1,2
+Northern Territory,Currently in care,442,1,3
+Northern Territory,Returned,243,1,4
+Northern Territory,Transferred,162,1,5
+Northern Territory,Other,16,1,6
+Queensland,Rehomed,2922,0,0
+Queensland,Reclaimed,1647,0,1
+Queensland,Euthanased,1133,0,2
+Queensland,Currently in care,397,0,3
+Queensland,Returned,204,0,4
+Queensland,Transferred,63,0,5
+Queensland,Other,35,0,6
+South Australia,Rehomed,867,3,0
+South Australia,Reclaimed,501,3,1
+South Australia,Euthanased,303,3,2
+South Australia,Currently in care,204,3,3
+South Australia,Returned,33,3,4
+South Australia,Transferred,49,3,5
+South Australia,Other,6,3,6
+Tasmania,Rehomed,220,6,0
+Tasmania,Reclaimed,0,6,1
+Tasmania,Euthanased,20,6,2
+Tasmania,Currently in care,91,6,3
+Tasmania,Returned,48,6,4
+Tasmania,Transferred,0,6,5
+Tasmania,Other,0,6,6
+Victoria,Rehomed,704,2,0
+Victoria,Reclaimed,646,2,1
+Victoria,Euthanased,210,2,2
+Victoria,Currently in care,199,2,3
+Victoria,Returned,83,2,4
+Victoria,Transferred,159,2,5
+Victoria,Other,14,2,6
+Western Australia,Rehomed,347,4,0
+Western Australia,Reclaimed,71,4,1
+Western Australia,Euthanased,174,4,2
+Western Australia,Currently in care,226,4,3
+Western Australia,Returned,23,4,4
+Western Australia,Transferred,91,4,5
+Western Australia,Other,43,4,6

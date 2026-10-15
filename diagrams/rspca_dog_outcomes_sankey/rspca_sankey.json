@@ -1,0 +1,589 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Dog outcomes and year-end care status by RSPCA society, 2024\u20132025. Counts and state labels reproduced exactly from Table 4 (p. 7). Ribbon thickness encodes counts. Selection highlights without rescaling.",
+  "width": 820,
+  "height": 550,
+  "padding": 0,
+  "autosize": {
+    "type": "none",
+    "contains": "padding"
+  },
+  "background": "white",
+  "signals": [
+    {
+      "name": "focusState",
+      "value": "All"
+    },
+    {
+      "name": "hoverState",
+      "value": null,
+      "on": [
+        {
+          "events": "@sourceNodes:mouseover",
+          "update": "datum.State"
+        },
+        {
+          "events": "@sourceNodes:mouseout",
+          "update": "null"
+        },
+        {
+          "events": "@sourceLabels:mouseover",
+          "update": "datum.State"
+        },
+        {
+          "events": "@sourceLabels:mouseout",
+          "update": "null"
+        }
+      ]
+    },
+    {
+      "name": "hoverOutcome",
+      "value": null,
+      "on": [
+        {
+          "events": "@targetNodes:mouseover",
+          "update": "datum.Outcome"
+        },
+        {
+          "events": "@targetNodes:mouseout",
+          "update": "null"
+        },
+        {
+          "events": "@targetLabels:mouseover",
+          "update": "datum.Outcome"
+        },
+        {
+          "events": "@targetLabels:mouseout",
+          "update": "null"
+        }
+      ]
+    },
+    {
+      "name": "sourceX",
+      "update": "width < 500 ? 56 : 92"
+    },
+    {
+      "name": "targetX",
+      "update": "width - (width < 500 ? 106 : 167)"
+    },
+    {
+      "name": "nodeWidth",
+      "value": 12
+    },
+    {
+      "name": "nodeGap",
+      "value": 29
+    },
+    {
+      "name": "chartTop",
+      "value": 43
+    },
+    {
+      "name": "unit",
+      "update": "(height - chartTop - 18 - 7 * nodeGap) / 15852"
+    },
+    {
+      "name": "midX",
+      "update": "(sourceX + nodeWidth + targetX) / 2"
+    }
+  ],
+  "data": [
+    {
+      "name": "records",
+      "url": "diagrams/rspca_dog_outcomes_sankey/rspca_dog_outcomes_2024_2025.csv",
+      "format": {
+        "type": "csv",
+        "parse": {
+          "Count": "number",
+          "StateOrder": "number",
+          "OutcomeOrder": "number"
+        }
+      }
+    },
+    {
+      "name": "states",
+      "source": "records",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": [
+            "State",
+            "StateOrder"
+          ],
+          "fields": [
+            "Count"
+          ],
+          "ops": [
+            "sum"
+          ],
+          "as": [
+            "total"
+          ]
+        },
+        {
+          "type": "stack",
+          "field": "total",
+          "sort": {
+            "field": "StateOrder",
+            "order": "ascending"
+          },
+          "as": [
+            "start",
+            "end"
+          ]
+        },
+        {
+          "type": "formula",
+          "expr": "chartTop + datum.start * unit + datum.StateOrder * nodeGap",
+          "as": "y0"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.y0 + datum.total * unit",
+          "as": "y1"
+        }
+      ]
+    },
+    {
+      "name": "outcomes",
+      "source": "records",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": [
+            "Outcome",
+            "OutcomeOrder"
+          ],
+          "fields": [
+            "Count"
+          ],
+          "ops": [
+            "sum"
+          ],
+          "as": [
+            "total"
+          ]
+        },
+        {
+          "type": "stack",
+          "field": "total",
+          "sort": {
+            "field": "OutcomeOrder",
+            "order": "ascending"
+          },
+          "as": [
+            "start",
+            "end"
+          ]
+        },
+        {
+          "type": "formula",
+          "expr": "chartTop + datum.start * unit + datum.OutcomeOrder * nodeGap",
+          "as": "y0"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.y0 + datum.total * unit",
+          "as": "y1"
+        }
+      ]
+    },
+    {
+      "name": "links",
+      "source": "records",
+      "transform": [
+        {
+          "type": "lookup",
+          "from": "states",
+          "key": "State",
+          "fields": [
+            "State"
+          ],
+          "values": [
+            "start",
+            "total"
+          ],
+          "as": [
+            "stateStart",
+            "stateTotal"
+          ]
+        },
+        {
+          "type": "lookup",
+          "from": "outcomes",
+          "key": "Outcome",
+          "fields": [
+            "Outcome"
+          ],
+          "values": [
+            "start",
+            "total"
+          ],
+          "as": [
+            "outcomeStart",
+            "outcomeTotal"
+          ]
+        },
+        {
+          "type": "stack",
+          "groupby": [
+            "State"
+          ],
+          "field": "Count",
+          "sort": {
+            "field": "OutcomeOrder"
+          },
+          "as": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "type": "stack",
+          "groupby": [
+            "Outcome"
+          ],
+          "field": "Count",
+          "sort": {
+            "field": "StateOrder"
+          },
+          "as": [
+            "t0",
+            "t1"
+          ]
+        },
+        {
+          "type": "filter",
+          "expr": "datum.Count > 0"
+        },
+        {
+          "type": "formula",
+          "expr": "chartTop + (datum.stateStart + datum.s0) * unit + datum.StateOrder * nodeGap",
+          "as": "sy0"
+        },
+        {
+          "type": "formula",
+          "expr": "chartTop + (datum.stateStart + datum.s1) * unit + datum.StateOrder * nodeGap",
+          "as": "sy1"
+        },
+        {
+          "type": "formula",
+          "expr": "chartTop + (datum.outcomeStart + datum.t0) * unit + datum.OutcomeOrder * nodeGap",
+          "as": "ty0"
+        },
+        {
+          "type": "formula",
+          "expr": "chartTop + (datum.outcomeStart + datum.t1) * unit + datum.OutcomeOrder * nodeGap",
+          "as": "ty1"
+        },
+        {
+          "type": "formula",
+          "expr": "'M' + (sourceX+nodeWidth) + ',' + datum.sy0 + 'C' + midX + ',' + datum.sy0 + ' ' + midX + ',' + datum.ty0 + ' ' + targetX + ',' + datum.ty0 + 'L' + targetX + ',' + datum.ty1 + 'C' + midX + ',' + datum.ty1 + ' ' + midX + ',' + datum.sy1 + ' ' + (sourceX+nodeWidth) + ',' + datum.sy1 + 'Z'",
+          "as": "path"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "outcomeColor",
+      "type": "ordinal",
+      "domain": [
+        "Rehomed",
+        "Reclaimed",
+        "Euthanased",
+        "Currently in care",
+        "Returned",
+        "Transferred",
+        "Other"
+      ],
+      "range": [
+        "#277f78",
+        "#4c86ad",
+        "#ad6362",
+        "#9c86ac",
+        "#b99448",
+        "#829777",
+        "#9aa1a6"
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "value": 0
+          },
+          "y": {
+            "value": 14
+          },
+          "text": {
+            "value": "RSPCA society"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "fontWeight": {
+            "value": "bold"
+          },
+          "fill": {
+            "value": "#59666c"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "targetX"
+          },
+          "y": {
+            "value": 14
+          },
+          "text": {
+            "signal": "width < 500 ? 'Outcome / status' : 'Outcome / year-end status'"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "fontWeight": {
+            "value": "bold"
+          },
+          "fill": {
+            "value": "#59666c"
+          }
+        }
+      }
+    },
+    {
+      "name": "ribbons",
+      "type": "path",
+      "from": {
+        "data": "links"
+      },
+      "encode": {
+        "update": {
+          "path": {
+            "field": "path"
+          },
+          "fill": {
+            "scale": "outcomeColor",
+            "field": "Outcome"
+          },
+          "fillOpacity": {
+            "signal": "(focusState != 'All' && datum.State != focusState) || (hoverState != null && datum.State != hoverState) || (hoverOutcome != null && datum.Outcome != hoverOutcome) ? 0.06 : 0.48"
+          },
+          "tooltip": {
+            "signal": "{'RSPCA society': datum.State, 'Outcome / status': datum.Outcome, 'Dogs': format(datum.Count, ','), 'Share of society records': format(datum.Count / datum.stateTotal, '.1%'), 'Share of this outcome': format(datum.Count / datum.outcomeTotal, '.1%')}"
+          },
+          "cursor": {
+            "value": "pointer"
+          }
+        },
+        "hover": {
+          "fillOpacity": {
+            "value": 0.9
+          }
+        }
+      }
+    },
+    {
+      "name": "sourceNodes",
+      "type": "rect",
+      "from": {
+        "data": "states"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "sourceX"
+          },
+          "width": {
+            "signal": "nodeWidth"
+          },
+          "y": {
+            "field": "y0"
+          },
+          "y2": {
+            "field": "y1"
+          },
+          "fill": {
+            "value": "#506971"
+          },
+          "opacity": {
+            "signal": "focusState == 'All' || datum.State == focusState ? 1 : 0.25"
+          },
+          "tooltip": {
+            "signal": "{'RSPCA society': datum.State, 'Total dog records': format(datum.total, ',')}"
+          },
+          "cursor": {
+            "value": "pointer"
+          }
+        }
+      }
+    },
+    {
+      "name": "targetNodes",
+      "type": "rect",
+      "from": {
+        "data": "outcomes"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "targetX"
+          },
+          "width": {
+            "signal": "nodeWidth"
+          },
+          "y": {
+            "field": "y0"
+          },
+          "y2": {
+            "field": "y1"
+          },
+          "fill": {
+            "scale": "outcomeColor",
+            "field": "Outcome"
+          },
+          "tooltip": {
+            "signal": "{'Outcome / status':datum.Outcome,'Total dog records':format(datum.total, ','),'Share of all records':format(datum.total / 15852,'.1%')}"
+          },
+          "cursor": {
+            "value": "pointer"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "states"
+      },
+      "encode": {
+        "update": {
+          "fill": {
+            "value": "#243238"
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "x": {
+            "signal": "sourceX - 9"
+          },
+          "y": {
+            "signal": "(datum.y0 + datum.y1)/2 - 3"
+          },
+          "align": {
+            "value": "right"
+          },
+          "text": {
+            "field": "State"
+          },
+          "fontWeight": {
+            "value": "bold"
+          }
+        }
+      },
+      "name": "sourceLabels"
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "states"
+      },
+      "encode": {
+        "update": {
+          "fill": {
+            "value": "#59666c"
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "x": {
+            "signal": "sourceX - 9"
+          },
+          "y": {
+            "signal": "(datum.y0 + datum.y1)/2 + 12"
+          },
+          "align": {
+            "value": "right"
+          },
+          "text": {
+            "signal": "format(datum.total, ',')"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "outcomes"
+      },
+      "encode": {
+        "update": {
+          "fill": {
+            "value": "#243238"
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "x": {
+            "signal": "targetX + nodeWidth + 9"
+          },
+          "y": {
+            "signal": "(datum.y0 + datum.y1)/2 - 3"
+          },
+          "text": {
+            "signal": "datum.Outcome == 'Currently in care' && width < 500 ? 'In care' : datum.Outcome"
+          },
+          "fontWeight": {
+            "value": "bold"
+          }
+        }
+      },
+      "name": "targetLabels"
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "outcomes"
+      },
+      "encode": {
+        "update": {
+          "fill": {
+            "value": "#59666c"
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "x": {
+            "signal": "targetX + nodeWidth + 9"
+          },
+          "y": {
+            "signal": "(datum.y0 + datum.y1)/2 + 12"
+          },
+          "text": {
+            "signal": "format(datum.total, ',') + ' \u00b7 ' + format(datum.total / 15852, '.1%')"
+          }
+        }
+      }
+    }
+  ]
+}

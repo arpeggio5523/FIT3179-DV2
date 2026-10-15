@@ -1,13 +1,17 @@
-/* Presentation layer: existing chart data and JSON files are preserved.
-   This file replaces the three older script tags in index.html. */
+
 (async function () {
   'use strict';
   const BODY = 'Source Sans 3';
   const TITLE = 'Source Serif 4';
   const palette = ['#0072B2', '#B86B00', '#944D88', '#56B4E9', '#51565D', '#6044A0'];
-  const shapes = ['circle', 'square', 'diamond', 'triangle-up', 'triangle-down', 'cross'];
   const views = new Map();
   const cache = new Map();
+  const saState = { area: 'metro', zoom: 1, selected: '' };
+  let saFeatures = [], saLayout, saController;
+  const saMetro = new Set(['Adelaide', 'Burnside', 'Campbelltown (SA)', 'Charles Sturt',
+    'Holdfast Bay', 'Marion', 'Mitcham', 'Norwood Payneham and St Peters', 'Playford',
+    'Port Adelaide Enfield', 'Prospect', 'Salisbury', 'Tea Tree Gully', 'Unley',
+    'Walkerville', 'West Torrens']);
   async function read(url, type = 'json') {
     const key = `${type}:${url}`;
     if (!cache.has(key)) cache.set(key, fetch(url).then(r => {
@@ -64,31 +68,38 @@
     return spec;
   }
   function styleSpec(spec, id, available) {
+    if (id === 'sa-ownership-map') return styleSAMap(spec, available);
     theme(spec);
     const isLite = spec.$schema.includes('vega-lite');
     if (id !== 'townsville-dot-map' && id !== 'sa-ownership-map') delete spec.title;
     let width = available;
-    if (id === 'townsville-bump') width = Math.max(850, available);
-    if (['breed-chart', 'townsville-connected-dots', 'registration-heatmap'].includes(id)) width = Math.max(540, available);
+    if (id === 'townsville-bump') width = Math.max(540, available);
+    if (id === 'breed-chart') width = Math.max(420, available);
+    if (['townsville-connected-dots', 'registration-heatmap'].includes(id)) width = Math.max(540, available);
     if (id === 'rspca-sankey') width = Math.max(660, available);
+    if (id === 'council-breed-treemap') width = Math.max(240, available);
     if (id === 'dog-map') width = Math.max(380, available);
     if (spec.vconcat) {
       const panels = spec.vconcat;
       delete spec.vconcat;
-      const sideBySide = available >= 760;
-      const panelWidth = sideBySide ? Math.floor((available - 36) / 2) : Math.max(280, available - 16);
+      const sideBySide = available >= 640;
+      // Vega titles and projection padding extend beyond the nominal plot width.
+      // Reserve an explicit gutter for them, eliminating the 5–40 px scrollbars.
+      const panelWidth = sideBySide
+        ? Math.max(280, Math.floor((available - 104) / 2))
+        : Math.max(220, available - 36);
       panels.forEach((p, i) => {
         p.width = panelWidth;
         // Centre each enlarged view on its own region. Distinct rotations also
         // prevent Vega-Lite from merging its projection with the overview.
         if (i === 1) p.projection.rotate = id === 'townsville-dot-map'
           ? [-146.75, 19.3, 0] : [-138.6, 34.9, 0];
-        p.height = sideBySide ? 400 : (i === 0 ? 360 : 300);
+        p.height = sideBySide ? 310 : (i === 0 ? 280 : 250);
         p.title = { text: i === 0 ? (id === 'townsville-dot-map' ? 'Townsville divisions' : 'South Australia') :
           (id === 'townsville-dot-map' ? 'Enlarged view · divisions 5–9' : 'Enlarged view · Adelaide'), font: TITLE, fontSize: 18, anchor: 'start' };
       });
       spec[sideBySide ? 'hconcat' : 'vconcat'] = panels;
-      spec.spacing = 28;
+      spec.spacing = 20;
       spec.bounds = 'flush';
       spec.config.legend.gradientLength = Math.min(260, panelWidth - 20);
       return spec;
@@ -96,66 +107,384 @@
     spec.width = width;
     if (isLite) spec.autosize = { type: 'fit-x', contains: 'padding', resize: true };
     if (id === 'breed-chart') {
-      spec.height = { step: 36 };
+      spec.height = { step: 32 };
       spec.encoding.y.axis.labelFontSize = 13;
+      spec.width = width - 225;
+      spec.padding = { left: 210, right: 15, top: 8, bottom: 60 };
+      spec.autosize = { type: 'none', contains: 'content' };
       spec.encoding.x.axis.tickCount = 4;
     }
+    if (id === 'council-breed-treemap') {
+      // Fixed bounds prevent hover updates from feeding back into fit-x sizing.
+      spec.width = width - 8;
+      spec.height = 310;
+      spec.padding = { left: 4, right: 4, top: 4, bottom: 88 };
+      spec.autosize = { type: 'none', contains: 'content', resize: false };
+      const tiles = spec.marks.find(mark => mark.name === 'tiles');
+      tiles.encode.update.strokeWidth = { value: 2 };
+      tiles.encode.hover.strokeWidth = { value: 2 };
+      // Hover changes colour only; neither tile geometry nor outer bounds change.
+      if (Array.isArray(spec.legends)) spec.legends.forEach(legend => {
+        legend.gradientLength = Math.min(320, width - 40);
+        legend.titleLimit = width - 16;
+        legend.title = 'Councils listing the breed in their top five';
+      });
+    }
     if (id === 'dog-map') {
-      spec.height = 430;
-      walk(spec, obj => { if (obj.legend) obj.legend.orient = 'bottom'; });
+      spec.height = 360;
+      walk(spec, obj => { if (obj.legend) { obj.legend.orient = 'bottom'; obj.legend.title = 'Casey · dog records'; obj.legend.offset = 8; } });
+      const dogsUrl = 'diagrams/casey_dogs_proportional_symbol_map/dogs_by_suburb.json';
+      spec.layer.push(
+        {
+          data: { url: dogsUrl },
+          transform: [{ filter: "datum.Suburb === 'Berwick'" }],
+          mark: { type: 'circle', filled: false, stroke: '#172c40', strokeWidth: 2.2 },
+          encoding: {
+            longitude: { field: 'Longitude', type: 'quantitative' },
+            latitude: { field: 'Latitude', type: 'quantitative' },
+            size: { field: 'DogCount', type: 'quantitative', scale: { type: 'linear', domain: [0, 5000], range: [0, 2850] }, legend: null }
+          }
+        },
+        {
+          data: {
+            values: [
+              { group: 'berwick-callout', step: 1, Longitude: 145.34263756034233, Latitude: -38.046883260375 },
+              { group: 'berwick-callout', step: 2, Longitude: 145.372, Latitude: -38.018 },
+              { group: 'berwick-callout', step: 3, Longitude: 145.405, Latitude: -38.018 }
+            ]
+          },
+          mark: { type: 'line', stroke: '#405466', strokeWidth: 1.3 },
+          encoding: {
+            longitude: { field: 'Longitude', type: 'quantitative' },
+            latitude: { field: 'Latitude', type: 'quantitative' },
+            detail: { field: 'group' },
+            order: { field: 'step' }
+          }
+        },
+        {
+          data: {
+            values: [{ Longitude: 145.407, Latitude: -38.014, note: 'Highest recorded count\nBerwick · 4,971 dogs\n18.0% of Casey total' }]
+          },
+          mark: {
+            type: 'text',
+            align: 'left',
+            baseline: 'top',
+            dx: 8,
+            dy: -2,
+            lineBreak: '\n',
+            font: BODY,
+            fontSize: 11,
+            fontWeight: 600,
+            fill: '#172c40'
+          },
+          encoding: {
+            longitude: { field: 'Longitude', type: 'quantitative' },
+            latitude: { field: 'Latitude', type: 'quantitative' },
+            text: { field: 'note' }
+          }
+        }
+      );
     }
     if (id === 'registration-heatmap') {
-      spec.height = 300;
-      // Values reinforce the diverging colour scale, including in greyscale.
-      const rect = spec.mark;
-      delete spec.mark;
-      spec.layer = [{ mark: rect }, { mark: { type: 'text', font: BODY, fontSize: 12 }, encoding: {
-        text: { field: 'Change', type: 'quantitative', format: '+.0%' },
-        color: { condition: { test: 'abs(datum.Change) > 0.38', value: '#ffffff' }, value: '#24384a' }
-      } }];
+      // Use more of the left column. The seven group names still fit in the
+      // reserved axis-label gutter, while the cells gain horizontal space.
+      const leftGutter = 90;
+      spec.width = width - leftGutter - 10;
+      spec.height = 230;
+      spec.padding = { left: leftGutter, right: 10, top: 8, bottom: 104 };
+      spec.autosize = { type: 'none', contains: 'content' };
+      // Keep cell values in hover tooltips only.
     }
     if (id === 'townsville-bump') {
-      // Allocate a dedicated right-hand gutter for direct endpoint labels.
-      spec.width = width - 300;
-      spec.height = 630;
-      spec.padding = { left: 5, top: 12, right: 290, bottom: 5 };
+      // Measure the complete endpoint labels instead of reserving 275px blindly.
+      const measure = document.createElement('canvas').getContext('2d');
+      measure.font = `600 13px "${BODY}", Arial, sans-serif`;
+      const endpointLabels = ['Maltese Terrier Cross', 'Staffordshire Bull Terrier Cross',
+        'Staffordshire Bull Terrier', 'Jack Russell Terrier', 'Dachshund', 'Miniature Dachshund'];
+      const labelGutter = Math.ceil(Math.max(...endpointLabels.map(text => measure.measureText(text).width))) + 22;
+      spec.width = width - 55 - labelGutter;
+      spec.height = 610;
+      spec.padding = { left: 55, top: 16, right: labelGutter, bottom: 72 };
+      // Let the first and last year reach the plot edges rather than inset by half a step.
+      spec.encoding.x.scale = { ...spec.encoding.x.scale, padding: 0 };
       spec.autosize = { type: 'none', contains: 'content' };
       spec.encoding.y.title = 'Rank · 1 is highest';
       walk(spec, obj => {
         if (obj.scale?.domain?.[0] === 'Maltese Terrier Cross') obj.scale.range = palette;
       });
       const points = spec.layer[3];
-      points.encoding.shape = { field: 'Breed', type: 'nominal',
-        scale: { domain: points.encoding.color.scale.domain, range: shapes }, legend: null };
+      // Use the same circular symbol for focus and context breeds.
+      spec.layer.forEach(layer => {
+        if (layer.mark?.type === 'point') {
+          layer.mark.shape = 'circle';
+          if (layer.encoding) delete layer.encoding.shape;
+        }
+      });
       points.mark.size = 95;
       const labels = spec.layer[4];
       labels.mark.fontSize = 13;
+      labels.encoding.color.condition = { test: "datum.Breed === 'Jack Russell Terrier'", value: '#246B8E' };
       labels.mark.dy = { expr: "datum.Breed === 'Dachshund' ? -5 : datum.Breed === 'Miniature Dachshund' ? 5 : 0" };
     }
     if (id === 'townsville-connected-dots') {
-      spec.height = { step: 52 };
+      // Reserve only the room needed for the full breed names, rather than a
+      // fixed 225px. Move the plot left and let its data area stretch right.
+      const breeds = ['Staffordshire Bull Terrier', 'Maltese Terrier Cross',
+        'Staffordshire Bull Terrier Cross', 'Jack Russell Terrier',
+        'Dachshund', 'Miniature Dachshund'];
+      const measure = document.createElement('canvas').getContext('2d');
+      measure.font = `13px "${BODY}", Arial, sans-serif`;
+      const leftGutter = Math.ceil(Math.max(...breeds.map(name => measure.measureText(name).width))) + 18;
+      const rightGutter = 20;
+      spec.width = width - leftGutter - rightGutter;
+      spec.padding = { left: leftGutter, right: rightGutter, top: 10, bottom: 65 };
+      spec.autosize = { type: 'none', contains: 'content' };
+      spec.height = { step: 32 };
       spec.layer[1].encoding.color.scale.range = ['#B86B00', '#0072B2'];
-      spec.layer[1].encoding.shape = { field: 'YearLabel', type: 'nominal',
-        scale: { domain: ['March 2023', 'March 2026'], range: ['circle', 'diamond'] }, legend: null };
+      // Colour differentiates the years; use one consistent circular shape.
+      spec.layer[1].mark.shape = 'circle';
+      delete spec.layer[1].encoding.shape;
     }
     if (id === 'dog-size-waffle') {
-      spec.height = width < 580 ? Math.min(310, width - 4) + 208 : 355;
-      spec.scales[0].range = ['#17658F', '#7EA8C4', '#D39A45'];
-    }
-    if (id === 'council-breed-treemap') {
-      spec.height = 440;
-      spec.legends[0].title = 'Councils listing the breed in their top five';
-      spec.legends[0].titleLimit = Math.max(220, width - 25);
+      // Size the tiles and legend together, rather than leaving an empty panel.
+      const compact = width < 540;
+      const legendColumns = compact && width >= 390;
+      const gridSize = Math.min(280, width - 16);
+      spec.height = compact ? gridSize + (legendColumns ? 86 : 190) : 304;
+      const signal = name => spec.signals.find(s => s.name === name);
+      signal('compact').update = 'width < 540';
+      signal('gridSize').update = 'min(280, width - 16)';
+      signal('gridX').update = 'compact ? (width - gridSize) / 2 : max(8, (width - 510) / 2)';
+      signal('legendX').update = 'compact ? 12 : gridX + gridSize + 28';
+      signal('legendY').update = 'compact ? gridSize + 32 : 38';
+      spec.scales[0].range = ['#17658F', '#8364A9', '#D39A45'];
+      for (const mark of spec.marks) {
+        if (mark.from?.data !== 'sizes') continue;
+        const enc = mark.encode.update;
+        const text = mark.type === 'text';
+        const secondary = Boolean(enc.text?.field);
+        enc.x = { signal: `legendX + ${legendColumns ? 'datum.Order * (width / 3) + ' : ''}${text ? 23 : 0}` };
+        enc.y = { signal: `legendY + ${legendColumns ? '' : 'datum.Order * (compact ? 50 : 86) + '}${text ? (secondary ? 31 : 13) : 0}` };
+        if (text) enc.fontSize = { value: secondary ? 13 : 16 };
+      }
     }
     if (id === 'rspca-sankey') {
-      spec.height = 550;
+      spec.height = 480;
       spec.scales.find(s => s.name === 'outcomeColor').range =
         ['#17658F', '#72A7CC', '#B87722', '#8364A9', '#C5A253', '#535D70', '#B5BAC2'];
-      // Wider labels are needed for the enlarged sans-serif text.
-      spec.signals.find(s => s.name === 'targetX').update = 'width - 192';
+      // Reserve space inside the SVG for complete labels on both sides.
+      spec.padding = 0;
+      spec.autosize = { type: 'none', contains: 'padding' };
+      spec.signals.find(s => s.name === 'sourceX').update = '220';
+      spec.signals.find(s => s.name === 'targetX').update = 'width - 210';
+      spec.signals.find(s => s.name === 'unit').update =
+        '(height - chartTop - 30 - 7 * nodeGap) / 15852';
     }
     return spec;
   }
+  // SA overview + controlled detail map. These controls change geography only;
+  // they never change the percentage denominator or the shared colour domain.
+  function saFocusFeatures(features) {
+    return saState.area === 'metro'
+      ? features.filter(f => saMetro.has(f.properties.LGA_NAME_2025))
+      : features.filter(f => f.properties.LGA_NAME_2025 === saState.area);
+  }
+  function saProjectionFit(features, width, height) {
+    const focus = saFocusFeatures(features);
+    if (!focus.length) throw new Error('No boundary found for the selected map centre');
+    const projection = vega.projection('azimuthalEqualArea')()
+      .rotate([-135, 32, 0])
+      .fitExtent([[18, 18], [width - 18, height - 18]], {
+        type: 'FeatureCollection', features: focus
+      });
+    return { scale: projection.scale(), translate: projection.translate() };
+  }
+  function styleSAMap(spec, available) {
+    saFeatures = spec.vconcat[0].data.values;
+    const sideBySide = available >= 640;
+    const width = sideBySide ? Math.floor((available - 96) / 2) : Math.max(220, available - 36);
+    const height = sideBySide ? 320 : 290;
+    saLayout = { width, height };
+    const fit = saProjectionFit(saFeatures, width, height);
+    const tooltip = [
+      { field: 'properties.LGA_NAME_2025', type: 'nominal', title: 'Council' },
+      { field: 'properties.DogOwners', type: 'quantitative', title: 'Recorded dog owners', format: ',d' },
+      { field: 'properties.MultiDogOwners', type: 'quantitative', title: 'Owners with 2+ dogs', format: ',d' },
+      { field: 'properties.Share', type: 'quantitative', title: 'Share with 2+ dogs', format: '.1%' }
+    ];
+    function panel(detail) {
+      return {
+        width, height,
+        title: detail ? 'Detail · explore councils' : 'South Australia · overview',
+        projection: detail ? {
+          type: 'azimuthalEqualArea', rotate: [-135, 32, 0],
+          scale: { expr: 'saBaseScale * saZoom / 3' },
+          translate: { expr: `[(saBaseTranslate[0] - ${width / 2}) * saZoom / 3 + ${width / 2}, (saBaseTranslate[1] - ${height / 2}) * saZoom / 3 + ${height / 2}]` }
+        } : { type: 'azimuthalEqualArea', rotate: [-135, 32, 0] },
+        data: { values: saFeatures },
+        layer: [
+          {
+            // At maximum zoom, isolate the fitted focus area in the detail panel.
+            // The overview always retains every council and the shared scale.
+            ...(detail ? { transform: [{ filter: "saZoom < 2.999 || indexof(saFocusNames, datum.properties.LGA_NAME_2025) >= 0" }] } : {}),
+            mark: { type: 'geoshape', stroke: '#ffffff', strokeWidth: .65, clip: true },
+            encoding: {
+              color: {
+                condition: { test: 'isValid(datum.properties.Share)', field: 'properties.Share', type: 'quantitative',
+                  scale: { domain: [0, .45], scheme: 'blues', clamp: true },
+                  legend: { title: 'Owners with 2+ dogs', orient: 'bottom', format: '.0%', gradientLength: Math.min(260, width - 20) }
+                }, value: '#E0E0E0'
+              }, tooltip
+            }
+          },
+          {
+            transform: [{ filter: "saSelectedCouncil !== '' && datum.properties.LGA_NAME_2025 === saSelectedCouncil" }, ...(detail ? [{ filter: "saZoom < 2.999 || indexof(saFocusNames, datum.properties.LGA_NAME_2025) >= 0" }] : [])],
+            mark: { type: 'geoshape', fillOpacity: 0, stroke: '#172c40', strokeWidth: 2.5, clip: true },
+            encoding: { tooltip }
+          }
+        ]
+      };
+    }
+    const result = {
+      $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+      params: [
+        { name: 'saFocusNames', value: saFocusFeatures(saFeatures).map(f => f.properties.LGA_NAME_2025) },
+        { name: 'saBaseScale', value: fit.scale },
+        { name: 'saBaseTranslate', value: fit.translate },
+        { name: 'saZoom', value: saState.zoom },
+        { name: 'saSelectedCouncil', value: saState.selected }
+      ],
+      [sideBySide ? 'hconcat' : 'vconcat']: [panel(false), panel(true)],
+      spacing: 28, bounds: 'flush', resolve: { scale: { color: 'shared' } },
+      config: { view: { stroke: null } }
+    };
+    return theme(result);
+  }
+  function setupSAControls() {
+    const host = document.getElementById('sa-ownership-map');
+    const viewport = host.closest('.chart-scroll');
+    const panel = viewport.parentElement;
+    const controls = document.createElement('div');
+    controls.className = 'new-chart-controls sa-map-controls';
+    controls.setAttribute('role', 'group');
+    controls.setAttribute('aria-label', 'Explore South Australian councils');
+    controls.innerHTML = `
+      <label for="sa-centre">Map centre</label>
+      <select id="sa-centre" aria-controls="sa-ownership-map" style="max-width:100%;width:260px">
+        <option value="metro">Adelaide metropolitan area</option>
+        <optgroup label="Centre on a council"></optgroup>
+      </select>
+      <div class="sa-zoom-control">
+        <div class="sa-zoom-heading"><label for="sa-zoom">Detail zoom</label>
+          <output id="sa-zoom-value" for="sa-zoom">1.0×</output></div>
+        <input id="sa-zoom" aria-controls="sa-ownership-map" type="range" min="1" max="3" step="0.1" value="1">
+        <div class="sa-zoom-ends" aria-hidden="true"><span>Surroundings</span><span>Selected area</span></div>
+      </div>
+      <button type="button" id="sa-reset">Reset view</button>`;
+    if (!document.getElementById('sa-control-styles')) {
+      const style = document.createElement('style');
+      style.id = 'sa-control-styles';
+      style.textContent = `
+        .sa-map-controls { gap: 12px 16px; align-items: center; justify-content: flex-start; padding: 10px 0; margin: 10px 0 8px; background: transparent; border: 0; border-radius: 0; }
+        .sa-map-controls .sa-zoom-control { width: 260px; max-width: 100%; margin: 0 6px; }
+        .sa-zoom-heading { display: flex; align-items: center; justify-content: space-between; }
+        .sa-zoom-heading label { margin: 0; }
+        .sa-zoom-heading output { padding: 2px 9px; border-radius: 5px; background: #e4eff6; color: #155f8a; font: 600 14px 'Source Sans 3', sans-serif; font-variant-numeric: tabular-nums; }
+        #sa-zoom { --range-fill: 0%; appearance: none; -webkit-appearance: none; display: block; width: 100%; height: 28px; margin: 5px 0 0; padding: 0; background: transparent; cursor: pointer; border: 0; }
+        #sa-zoom::-webkit-slider-runnable-track { height: 6px; border-radius: 4px; background: linear-gradient(to right, #17658f 0%, #17658f var(--range-fill), #cdd9e3 var(--range-fill), #cdd9e3 100%); }
+        #sa-zoom::-moz-range-track { height: 6px; border-radius: 4px; background: #cdd9e3; }
+        #sa-zoom::-moz-range-progress { height: 6px; border-radius: 4px; background: #17658f; }
+        #sa-zoom::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; margin-top: -6px; border: 3px solid white; border-radius: 50%; background: #17658f; box-shadow: 0 0 0 1px #17658f, 0 2px 4px #0002; }
+        #sa-zoom::-moz-range-thumb { box-sizing: border-box; width: 18px; height: 18px; border: 3px solid white; border-radius: 50%; background: #17658f; box-shadow: 0 0 0 1px #17658f, 0 2px 4px #0002; }
+        #sa-zoom:focus-visible { outline: 2px solid #17658f; outline-offset: 4px; border-radius: 5px; }
+        .sa-zoom-ends { display: flex; justify-content: space-between; gap: 16px; font: 13px/1.4 'Source Sans 3', sans-serif; color: #526372; }
+        @media (max-width: 600px) { .sa-map-controls { padding: 10px 0; } .sa-map-controls .sa-zoom-control { width: 100%; margin: 0; } }
+      `;
+      document.head.appendChild(style);
+    }
+    // Show the overview and detail maps first, then offer exploration controls.
+    // This keeps controls clearly attached to the map they affect.
+    viewport.insertAdjacentElement('afterend', controls);
+    const hint = document.createElement('p');
+    hint.className = 'note'; hint.id = 'sa-map-hint';
+    hint.textContent = 'Zoom the detail map from its surroundings (1×) to the selected area (3×). Hover or click a council for its recorded values. The overview and colour scale stay fixed.';
+    controls.insertAdjacentElement('afterend', hint);
+    const detail = document.createElement('p');
+    detail.id = 'sa-council-detail'; detail.className = 'takeaway';
+    detail.setAttribute('role', 'status'); detail.setAttribute('aria-live', 'polite');
+    detail.setAttribute('aria-atomic', 'true');
+    detail.style.margin = '18px 0 0';
+    panel.appendChild(detail);
+    const centre = controls.querySelector('#sa-centre');
+    const zoom = controls.querySelector('#sa-zoom');
+    const output = controls.querySelector('#sa-zoom-value');
+    centre.setAttribute('aria-describedby', hint.id);
+    zoom.setAttribute('aria-describedby', hint.id);
+    const group = centre.querySelector('optgroup');
+    saFeatures.filter(f => Number.isFinite(f.properties.Share))
+      .sort((a, b) => a.properties.LGA_NAME_2025.localeCompare(b.properties.LGA_NAME_2025))
+      .forEach(f => group.appendChild(new Option(f.properties.LGA_NAME_2025, f.properties.LGA_NAME_2025)));
+    let pending = false;
+    let dirty = false;
+    async function sync() {
+      dirty = true;
+      if (pending) return;
+      pending = true;
+      try {
+        while (dirty) {
+          dirty = false;
+          const fit = saProjectionFit(saFeatures, saLayout.width, saLayout.height);
+          const view = views.get('sa-ownership-map');
+          if (view) await view.signal('saFocusNames', saFocusFeatures(saFeatures).map(f => f.properties.LGA_NAME_2025))
+            .signal('saBaseScale', fit.scale)
+            .signal('saBaseTranslate', fit.translate)
+            .signal('saZoom', saState.zoom)
+            .signal('saSelectedCouncil', saState.selected).runAsync();
+        }
+      } finally { pending = false; }
+    }
+    function explain() {
+      output.value = `${saState.zoom.toFixed(1)}×`;
+      zoom.style.setProperty('--range-fill', `${(saState.zoom - 1) / 2 * 100}%`);
+      zoom.setAttribute('aria-valuetext', `${saState.zoom.toFixed(1)} times the surrounding-area view${saState.zoom === 3 ? ', selected area only' : ''}`);
+      const feature = saFeatures.find(f => f.properties.LGA_NAME_2025 === saState.selected);
+      if (!feature) {
+        detail.textContent = 'Overview: darker blue means a higher share of recorded owners with two or more dogs. The detail map starts with Adelaide metropolitan councils.';
+        return;
+      }
+      const p = feature.properties;
+      detail.textContent = Number.isFinite(p.Share)
+        ? `${p.LGA_NAME_2025}: ${(p.Share * 100).toFixed(1)}% of recorded dog owners had two or more dogs (${p.MultiDogOwners.toLocaleString('en-AU')} of ${p.DogOwners.toLocaleString('en-AU')} owners). Snapshot: 30 May 2025.`
+        : `${p.LGA_NAME_2025}: no matched owner data. Grey does not mean zero.`;
+    }
+    function update() {
+      explain();
+      sync().catch(error => {
+        console.error('SA map interaction', error);
+        detail.textContent = 'The map could not update. Please reload the page.';
+      });
+    }
+    centre.addEventListener('change', () => {
+      saState.area = centre.value; saState.zoom = 1;
+      saState.selected = centre.value === 'metro' ? '' : centre.value;
+      zoom.value = '1'; update();
+    });
+    zoom.addEventListener('input', () => { saState.zoom = Number(zoom.value); update(); });
+    controls.querySelector('#sa-reset').addEventListener('click', () => {
+      Object.assign(saState, { area: 'metro', zoom: 1, selected: '' });
+      centre.value = 'metro'; zoom.value = '1'; update();
+    });
+    function attach(view) {
+      view.addEventListener('click', (event, item) => {
+        const name = item?.datum?.properties?.LGA_NAME_2025;
+        if (!name) return;
+        saState.selected = name; update();
+      });
+    }
+    attach(views.get('sa-ownership-map')); explain();
+    return { attach };
+  }
+
   async function hydrate(spec) {
     const pending = [];
     walk(spec, obj => {
@@ -185,7 +514,7 @@
       async function draw() {
         if (drawing) { rerun = true; return; }
         const width = Math.floor(viewport.clientWidth);
-        if (width === previousWidth || width < 1) return;
+        if (Math.abs(width - previousWidth) < 2 || width < 1) return;
         drawing = true;
         try {
           previousWidth = width;
@@ -198,6 +527,7 @@
           host.textContent = '';
           const result = await vegaEmbed(host, spec, { actions: false, renderer: 'svg' });
           views.set(id, result.view);
+          if (id === 'sa-ownership-map') saController?.attach(result.view);
           host.classList.remove('chart-error');
         } finally {
           drawing = false;
@@ -741,6 +1071,8 @@
       spacing: 24,
       config
     };
+  }).then(view => {
+    if (view) saController = setupSAControls();
   });
 
 })();

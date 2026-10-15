@@ -1,0 +1,4 @@
+Size,Weight,Percent,Start,End,Order
+Small,Up to 10 kg,38,0,38,0
+Medium,10–25 kg,38,38,76,1
+Large,Over 25 kg,24,76,100,2

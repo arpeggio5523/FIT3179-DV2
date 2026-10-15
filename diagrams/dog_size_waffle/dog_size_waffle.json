@@ -1,0 +1,234 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Published 2025 dog weight-size proportions from Animal Medicines Australia: Small 38%, Medium 38%, Large 24%. Each of 100 equal tiles is one percentage point, not an individual surveyed dog.",
+  "width": 820,
+  "height": 355,
+  "padding": 0,
+  "autosize": {
+    "type": "none",
+    "contains": "padding"
+  },
+  "background": "white",
+  "signals": [
+    {
+      "name": "focusSize",
+      "value": "All"
+    },
+    {
+      "name": "compact",
+      "update": "width < 580"
+    },
+    {
+      "name": "gridSize",
+      "update": "min(310, width - 4)"
+    },
+    {
+      "name": "step",
+      "update": "gridSize / 10"
+    },
+    {
+      "name": "gridX",
+      "update": "compact ? (width-gridSize)/2 : 16"
+    },
+    {
+      "name": "legendX",
+      "update": "compact ? 12 : gridX + gridSize + 55"
+    },
+    {
+      "name": "legendY",
+      "update": "compact ? gridSize + 42 : 56"
+    }
+  ],
+  "data": [
+    {
+      "name": "sizes",
+      "url": "diagrams/dog_size_waffle/dog_sizes_2025.csv",
+      "format": {
+        "type": "csv",
+        "parse": {
+          "Percent": "number",
+          "Start": "number",
+          "End": "number",
+          "Order": "number"
+        }
+      }
+    },
+    {
+      "name": "tiles",
+      "transform": [
+        {
+          "type": "sequence",
+          "start": 0,
+          "stop": 100,
+          "as": "tile"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.tile < 38 ? 'Small' : datum.tile < 76 ? 'Medium' : 'Large'",
+          "as": "Size"
+        },
+        {
+          "type": "lookup",
+          "from": "sizes",
+          "key": "Size",
+          "fields": [
+            "Size"
+          ],
+          "values": [
+            "Weight",
+            "Percent"
+          ]
+        },
+        {
+          "type": "formula",
+          "expr": "datum.tile % 10",
+          "as": "col"
+        },
+        {
+          "type": "formula",
+          "expr": "floor(datum.tile / 10)",
+          "as": "row"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "sizeColor",
+      "type": "ordinal",
+      "domain": [
+        "Small",
+        "Medium",
+        "Large"
+      ],
+      "range": [
+        "#267f78",
+        "#6095b4",
+        "#ce9455"
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "name": "sizeTiles",
+      "from": {
+        "data": "tiles"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "gridX + datum.col*step"
+          },
+          "y": {
+            "signal": "10 + datum.row*step"
+          },
+          "width": {
+            "signal": "step-4"
+          },
+          "height": {
+            "signal": "step-4"
+          },
+          "cornerRadius": {
+            "value": 2
+          },
+          "fill": {
+            "scale": "sizeColor",
+            "field": "Size"
+          },
+          "fillOpacity": {
+            "signal": "focusSize == 'All' || focusSize == datum.Size ? 1 : 0.13"
+          },
+          "tooltip": {
+            "signal": "{'Size':datum.Size,'Weight category':datum.Weight,'Published share':datum.Percent + '%','One square':'1 percentage point'}"
+          }
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {
+        "data": "sizes"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "legendX"
+          },
+          "y": {
+            "signal": "legendY + datum.Order * (compact ? 50 : 90)"
+          },
+          "width": {
+            "value": 15
+          },
+          "height": {
+            "value": 15
+          },
+          "fill": {
+            "scale": "sizeColor",
+            "field": "Size"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "sizes"
+      },
+      "encode": {
+        "update": {
+          "fill": {
+            "value": "#243238"
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fontSize": {
+            "value": 18
+          },
+          "x": {
+            "signal": "legendX + 27"
+          },
+          "y": {
+            "signal": "legendY + datum.Order * (compact ? 50 : 90) + 13"
+          },
+          "text": {
+            "signal": "datum.Size + ' \u00b7 ' + datum.Percent + '%'"
+          },
+          "fontWeight": {
+            "value": "bold"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "sizes"
+      },
+      "encode": {
+        "update": {
+          "fill": {
+            "value": "#59666c"
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "x": {
+            "signal": "legendX + 27"
+          },
+          "y": {
+            "signal": "legendY + datum.Order * (compact ? 50 : 90) + 33"
+          },
+          "text": {
+            "field": "Weight"
+          }
+        }
+      }
+    }
+  ]
+}
