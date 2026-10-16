@@ -1,0 +1,434 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Seven matched breed labels in council top-five lists. All values from the existing project CSV; no pedigree inference.",
+  "width": 660,
+  "height": 350,
+  "padding": {
+    "left": 12,
+    "right": 12,
+    "top": 65,
+    "bottom": 65
+  },
+  "autosize": {
+    "type": "none",
+    "contains": "content"
+  },
+  "signals": [
+    {
+      "name": "gap",
+      "value": 190
+    },
+    {
+      "name": "leftEnd",
+      "update": "(width-gap)/2"
+    },
+    {
+      "name": "rightStart",
+      "update": "(width+gap)/2"
+    }
+  ],
+  "data": [
+    {
+      "name": "pairs",
+      "values": [
+        {
+          "Breed": "Border Collie",
+          "Plain": 63,
+          "Cross": 4,
+          "Label": "Border Collie"
+        },
+        {
+          "Breed": "Australian Kelpie",
+          "Plain": 47,
+          "Cross": 27,
+          "Label": "Australian Kelpie"
+        },
+        {
+          "Breed": "Jack Russell Terrier",
+          "Plain": 40,
+          "Cross": 2,
+          "Label": "Jack Russell Terrier"
+        },
+        {
+          "Breed": "Labrador Retriever",
+          "Plain": 30,
+          "Cross": 8,
+          "Label": "Labrador Retriever"
+        },
+        {
+          "Breed": "Staffordshire Bull Terrier",
+          "Plain": 14,
+          "Cross": 3,
+          "Label": "Staffordshire Bull|Terrier"
+        },
+        {
+          "Breed": "Maltese",
+          "Plain": 2,
+          "Cross": 47,
+          "Label": "Maltese"
+        },
+        {
+          "Breed": "Cavalier King Charles Spaniel",
+          "Plain": 1,
+          "Cross": 14,
+          "Label": "Cavalier King Charles|Spaniel"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "left",
+      "type": "linear",
+      "domain": [
+        0,
+        68
+      ],
+      "range": [
+        {
+          "signal": "leftEnd"
+        },
+        0
+      ]
+    },
+    {
+      "name": "right",
+      "type": "linear",
+      "domain": [
+        0,
+        68
+      ],
+      "range": [
+        {
+          "signal": "rightStart"
+        },
+        {
+          "signal": "width"
+        }
+      ]
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "domain": {
+        "data": "pairs",
+        "field": "Breed"
+      },
+      "range": "height",
+      "padding": 0.4
+    }
+  ],
+  "axes": [
+    {
+      "scale": "left",
+      "orient": "bottom",
+      "values": [
+        0,
+        17,
+        34,
+        51,
+        68
+      ],
+      "grid": true,
+      "gridColor": "#e7edf2",
+      "domain": false,
+      "tickSize": 0,
+      "labelFontSize": 13
+    },
+    {
+      "scale": "right",
+      "orient": "bottom",
+      "values": [
+        0,
+        17,
+        34,
+        51,
+        68
+      ],
+      "grid": true,
+      "gridColor": "#e7edf2",
+      "domain": false,
+      "tickSize": 0,
+      "labelFontSize": 13
+    }
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": {
+        "data": "pairs"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "left",
+            "field": "Plain"
+          },
+          "x2": {
+            "scale": "left",
+            "value": 0
+          },
+          "y": {
+            "scale": "y",
+            "field": "Breed"
+          },
+          "height": {
+            "scale": "y",
+            "band": 1
+          },
+          "fill": {
+            "value": "#0072B2"
+          },
+          "tooltip": {
+            "signal": "{'Entry':datum.Breed, 'Councils':datum.Plain+' of 68', 'Share of councils':format(datum.Plain/68,'.1%')}"
+          }
+        },
+        "hover": {
+          "opacity": {
+            "value": 0.75
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {
+        "data": "pairs"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "left",
+            "field": "Plain"
+          },
+          "dx": {
+            "value": -7
+          },
+          "y": {
+            "scale": "y",
+            "field": "Breed",
+            "band": 0.5
+          },
+          "align": {
+            "value": "right"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "Plain"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "fill": {
+            "value": "#172c40"
+          }
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {
+        "data": "pairs"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "right",
+            "value": 0
+          },
+          "x2": {
+            "scale": "right",
+            "field": "Cross"
+          },
+          "y": {
+            "scale": "y",
+            "field": "Breed"
+          },
+          "height": {
+            "scale": "y",
+            "band": 1
+          },
+          "fill": {
+            "value": "#B86B00"
+          },
+          "tooltip": {
+            "signal": "{'Entry':datum.Breed + ' Cross', 'Councils':datum.Cross+' of 68', 'Share of councils':format(datum.Cross/68,'.1%')}"
+          }
+        },
+        "hover": {
+          "opacity": {
+            "value": 0.75
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {
+        "data": "pairs"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "right",
+            "field": "Cross"
+          },
+          "dx": {
+            "value": 7
+          },
+          "y": {
+            "scale": "y",
+            "field": "Breed",
+            "band": 0.5
+          },
+          "align": {
+            "value": "left"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "Cross"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "fill": {
+            "value": "#172c40"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {
+        "data": "pairs"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "width/2"
+          },
+          "y": {
+            "scale": "y",
+            "field": "Breed",
+            "band": 0.5
+          },
+          "text": {
+            "signal": "split(datum.Label,'|')"
+          },
+          "align": {
+            "value": "center"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "lineHeight": {
+            "value": 16
+          },
+          "fill": {
+            "value": "#172c40"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "leftEnd/2"
+          },
+          "y": {
+            "value": -45
+          },
+          "text": {
+            "value": [
+              "Breed entry",
+              "without \u201cCross\u201d"
+            ]
+          },
+          "align": {
+            "value": "center"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "lineHeight": {
+            "value": 18
+          },
+          "fill": {
+            "value": "#405466"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "(rightStart+width)/2"
+          },
+          "y": {
+            "value": -45
+          },
+          "text": {
+            "value": [
+              "Corresponding",
+              "\u201cCross\u201d entry"
+            ]
+          },
+          "align": {
+            "value": "center"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "lineHeight": {
+            "value": 18
+          },
+          "fill": {
+            "value": "#405466"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "width/2"
+          },
+          "y": {
+            "value": 395
+          },
+          "text": {
+            "value": "Councils listing the entry in their top five (out of 68)"
+          },
+          "align": {
+            "value": "center"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "lineHeight": {
+            "value": 18
+          },
+          "fill": {
+            "value": "#405466"
+          }
+        }
+      }
+    }
+  ]
+}

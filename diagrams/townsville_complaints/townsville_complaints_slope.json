@@ -1,0 +1,448 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Reported dog complaints in Townsville: full calendar years 2019 and 2025. Source: animal-complaints (1).xlsx, Animal Complaints sheet, Townsville City Council. Animal Type trimmed and filtered to dog; each row counts as one complaint record, aggregated by Complaint Type and Date Received year. Both years contain all 12 months. This is an endpoint comparison, not a continuous trend or causal estimate.",
+  "width": 380,
+  "height": 430,
+  "padding": {
+    "left": 205,
+    "right": 205,
+    "top": 50,
+    "bottom": 55
+  },
+  "autosize": {
+    "type": "none",
+    "contains": "content"
+  },
+  "data": [
+    {
+      "name": "complaints",
+      "values": [
+        {
+          "Category": "Noise",
+          "StartYear": 2019,
+          "EndYear": 2025,
+          "Start": 1331,
+          "End": 978,
+          "Period": "January\u2013December",
+          "Months": 12
+        },
+        {
+          "Category": "Wandering",
+          "StartYear": 2019,
+          "EndYear": 2025,
+          "Start": 743,
+          "End": 649,
+          "Period": "January\u2013December",
+          "Months": 12
+        },
+        {
+          "Category": "Enclosure",
+          "StartYear": 2019,
+          "EndYear": 2025,
+          "Start": 857,
+          "End": 594,
+          "Period": "January\u2013December",
+          "Months": 12
+        },
+        {
+          "Category": "Aggressive animal",
+          "StartYear": 2019,
+          "EndYear": 2025,
+          "Start": 707,
+          "End": 864,
+          "Period": "January\u2013December",
+          "Months": 12
+        },
+        {
+          "Category": "Attack",
+          "StartYear": 2019,
+          "EndYear": 2025,
+          "Start": 579,
+          "End": 598,
+          "Period": "January\u2013December",
+          "Months": 12
+        },
+        {
+          "Category": "Private impound",
+          "StartYear": 2019,
+          "EndYear": 2025,
+          "Start": 1201,
+          "End": 1149,
+          "Period": "January\u2013December",
+          "Months": 12
+        }
+      ]
+    },
+    {
+      "name": "ends",
+      "source": "complaints",
+      "transform": [
+        {
+          "type": "fold",
+          "fields": [
+            "Start",
+            "End"
+          ],
+          "as": [
+            "Side",
+            "Count"
+          ]
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "point",
+      "domain": [
+        "Start",
+        "End"
+      ],
+      "range": [
+        0,
+        {
+          "signal": "width"
+        }
+      ]
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {
+        "data": "ends",
+        "field": "Count"
+      },
+      "zero": true,
+      "nice": true,
+      "range": "height"
+    },
+    {
+      "name": "colour",
+      "type": "ordinal",
+      "domain": [
+        "Noise",
+        "Wandering",
+        "Enclosure",
+        "Aggressive animal",
+        "Attack",
+        "Private impound"
+      ],
+      "range": [
+        "#0072B2",
+        "#B86B00",
+        "#944D88",
+        "#56B4E9",
+        "#51565D",
+        "#6044A0"
+      ]
+    }
+  ],
+  "axes": [
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": true,
+      "gridColor": "#e7edf2",
+      "domain": false,
+      "tickCount": 5,
+      "labels": false,
+      "ticks": false
+    }
+  ],
+  "marks": [
+    {
+      "name": "slopes",
+      "type": "rule",
+      "from": {
+        "data": "complaints"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "value": 0
+          },
+          "x2": {
+            "signal": "width"
+          },
+          "y": {
+            "scale": "y",
+            "field": "Start"
+          },
+          "y2": {
+            "scale": "y",
+            "field": "End"
+          },
+          "stroke": {
+            "scale": "colour",
+            "field": "Category"
+          },
+          "strokeWidth": {
+            "value": 3
+          },
+          "opacity": {
+            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+          },
+          "tooltip": {
+            "signal": "{'Category':datum.Category, 'Earlier year':datum.StartYear, 'Earlier complaints':datum.Start, 'Later year':datum.EndYear, 'Later complaints':datum.End, 'Change':datum.End-datum.Start}"
+          }
+        }
+      }
+    },
+    {
+      "name": "dots",
+      "type": "symbol",
+      "from": {
+        "data": "ends"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "x",
+            "field": "Side"
+          },
+          "y": {
+            "scale": "y",
+            "field": "Count"
+          },
+          "size": {
+            "value": 85
+          },
+          "fill": {
+            "scale": "colour",
+            "field": "Category"
+          },
+          "opacity": {
+            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+          },
+          "tooltip": {
+            "signal": "{'Category':datum.Category, 'Earlier year':datum.StartYear, 'Earlier complaints':datum.Start, 'Later year':datum.EndYear, 'Later complaints':datum.End, 'Change':datum.End-datum.Start}"
+          }
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "interactive": false,
+      "from": {
+        "data": "complaints"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "0"
+          },
+          "x2": {
+            "signal": "-18"
+          },
+          "y": {
+            "scale": "y",
+            "field": "Start"
+          },
+          "y2": {
+            "field": "LabelStart"
+          },
+          "stroke": {
+            "scale": "colour",
+            "field": "Category"
+          },
+          "opacity": {
+            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {
+        "data": "complaints"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "-24"
+          },
+          "y": {
+            "field": "LabelStart"
+          },
+          "align": {
+            "value": "right"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "signal": "datum.Category + '  ' + format(datum.Start, ',')"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "fill": {
+            "value": "#172c40"
+          },
+          "opacity": {
+            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+          }
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "interactive": false,
+      "from": {
+        "data": "complaints"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "width"
+          },
+          "x2": {
+            "signal": "width+18"
+          },
+          "y": {
+            "scale": "y",
+            "field": "End"
+          },
+          "y2": {
+            "field": "LabelEnd"
+          },
+          "stroke": {
+            "scale": "colour",
+            "field": "Category"
+          },
+          "opacity": {
+            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {
+        "data": "complaints"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "width+24"
+          },
+          "y": {
+            "field": "LabelEnd"
+          },
+          "align": {
+            "value": "left"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "signal": "datum.Category + '  ' + format(datum.End, ',')"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "fill": {
+            "value": "#172c40"
+          },
+          "opacity": {
+            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "0"
+          },
+          "y": {
+            "value": -22
+          },
+          "text": {
+            "signal": "length(data('complaints')) ? data('complaints')[0].StartYear : ''"
+          },
+          "align": {
+            "value": "center"
+          },
+          "fontSize": {
+            "value": 18
+          },
+          "fill": {
+            "value": "#172c40"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "width"
+          },
+          "y": {
+            "value": -22
+          },
+          "text": {
+            "signal": "length(data('complaints')) ? data('complaints')[0].EndYear : ''"
+          },
+          "align": {
+            "value": "center"
+          },
+          "fontSize": {
+            "value": 18
+          },
+          "fill": {
+            "value": "#172c40"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "width/2"
+          },
+          "y": {
+            "signal": "height+35"
+          },
+          "text": {
+            "value": "Reported dog complaints \u00b7 shared count scale"
+          },
+          "align": {
+            "value": "center"
+          },
+          "fontSize": {
+            "value": 13
+          },
+          "fill": {
+            "value": "#405466"
+          }
+        }
+      }
+    }
+  ],
+  "signals": [
+    {
+      "name": "focus",
+      "value": null,
+      "on": [
+        {
+          "events": "@slopes:mouseover, @dots:mouseover",
+          "update": "datum.Category"
+        },
+        {
+          "events": "@slopes:mouseout, @dots:mouseout",
+          "update": "null"
+        }
+      ]
+    }
+  ]
+}

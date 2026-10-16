@@ -77,7 +77,7 @@
     if (id === 'breed-chart') width = Math.max(420, available);
     if (['townsville-connected-dots', 'registration-heatmap'].includes(id)) width = Math.max(540, available);
     if (id === 'rspca-sankey') width = Math.max(660, available);
-    if (id === 'council-breed-treemap') width = Math.max(240, available);
+    if (id === 'council-breed-butterfly') width = Math.max(240, available);
     if (id === 'dog-map') width = Math.max(380, available);
     if (spec.vconcat) {
       const panels = spec.vconcat;
@@ -114,21 +114,29 @@
       spec.autosize = { type: 'none', contains: 'content' };
       spec.encoding.x.axis.tickCount = 4;
     }
-    if (id === 'council-breed-treemap') {
-      // Fixed bounds prevent hover updates from feeding back into fit-x sizing.
-      spec.width = width - 8;
-      spec.height = 310;
-      spec.padding = { left: 4, right: 4, top: 4, bottom: 88 };
+    if (id === 'council-breed-butterfly') {
+      spec.width = Math.max(580, available - 64);
+      spec.height = 350;
+      spec.padding = { left: 32, right: 32, top: 65, bottom: 65 };
       spec.autosize = { type: 'none', contains: 'content', resize: false };
-      const tiles = spec.marks.find(mark => mark.name === 'tiles');
-      tiles.encode.update.strokeWidth = { value: 2 };
-      tiles.encode.hover.strokeWidth = { value: 2 };
-      // Hover changes colour only; neither tile geometry nor outer bounds change.
-      if (Array.isArray(spec.legends)) spec.legends.forEach(legend => {
-        legend.gradientLength = Math.min(320, width - 40);
-        legend.titleLimit = width - 16;
-        legend.title = 'Councils listing the breed in their top five';
-      });
+    }
+    if (id === 'townsville-complaints-slope') {
+      spec.width = Math.max(240, available - 410);
+      spec.height = 430;
+      spec.padding = { left: 205, right: 205, top: 50, bottom: 55 };
+      spec.autosize = { type: 'none', contains: 'content', resize: false };
+      const rows = spec.data.find(d => d.name === 'complaints').values;
+      const ymax = vega.scale('linear')().domain([0, Math.max(...rows.flatMap(d => [d.Start,d.End])) || 1]).nice().domain()[1];
+      spec.scales.find(s => s.name === 'y').domain = [0, ymax];
+      for (const side of ['Start', 'End']) {
+        const ordered = [...rows].sort((a,b) => b[side]-a[side]);
+        let previous = -26;
+        ordered.forEach(d => { d['Label'+side] = Math.max(spec.height * (1-d[side]/ymax), previous+26); previous=d['Label'+side]; });
+        if (previous > spec.height) {
+          ordered[ordered.length-1]['Label'+side] = spec.height;
+          for (let i=ordered.length-2;i>=0;i--) ordered[i]['Label'+side] = Math.min(ordered[i]['Label'+side],ordered[i+1]['Label'+side]-26);
+        }
+      }
     }
     if (id === 'dog-map') {
       spec.height = 360;
@@ -548,9 +556,29 @@
       host.textContent = `This chart could not load. ${error.message}. Open the project with Live Server and check your connection.`;
     }
   }
+  // The complaints section stays hidden until verified totals are supplied.
+  async function loadComplaints() {
+    const spec = await read('diagrams/townsville_complaints/townsville_complaints_slope.json');
+    const rows = spec.data.find(d => d.name === 'complaints')?.values;
+    if (!Array.isArray(rows) || rows.length === 0) return;
+    const categories = ['Noise','Wandering','Enclosure','Aggressive animal','Attack','Private impound'];
+    const first = rows[0];
+    if (rows.length !== 6 || new Set(rows.map(d => d.Category)).size !== 6 ||
+        !rows.every(d => categories.includes(d.Category) &&
+          Number.isInteger(d.Start) && d.Start >= 0 && Number.isInteger(d.End) && d.End >= 0 &&
+          Number.isInteger(d.StartYear) && Number.isInteger(d.EndYear) && d.StartYear < d.EndYear &&
+          d.Period === 'January–December' && d.Months === 12 && d.StartYear === first.StartYear && d.EndYear === first.EndYear)) {
+      throw new Error('Complaints require six verified categories with nonnegative integer counts and matching full calendar years.');
+    }
+    const section = document.getElementById('section-complaints-heading');
+    section.hidden = false;
+    document.getElementById('complaints-years').textContent = `Townsville · Full years ${first.StartYear} and ${first.EndYear}`;
+    await render('townsville-complaints-slope', () => spec);
+  }
+  loadComplaints().catch(error => console.error('Complaints data not ready:', error));
   const jobs = [
     ['breed-chart', 'top10_dogs_lollipop/dog_chart.json'],
-    ['council-breed-treemap', 'council_breed_treemap/council_breed_treemap.json'],
+    ['council-breed-butterfly', 'council_breed_treemap/council_breed_butterfly.json'],
     ['dog-map', 'casey_dogs_proportional_symbol_map/dog_map.json'],
     ['registration-heatmap', 'group_registrations_heatmap/registration_heatmap.json'],
     ['townsville-bump', 'townsville_breeds_bump/townsville_bump.json'],
