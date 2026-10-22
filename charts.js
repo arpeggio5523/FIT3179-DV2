@@ -3,7 +3,7 @@
   'use strict';
   const BODY = 'Source Sans 3';
   const TITLE = 'Source Serif 4';
-  const palette = ['#0072B2', '#B86B00', '#944D88', '#56B4E9', '#51565D', '#6044A0'];
+  const palette = ['#0072B2', '#E69F00', '#CC79A7', '#56B4E9', '#E66A50', '#9460C5'];
   const views = new Map();
   const cache = new Map();
   const saState = { area: 'metro', zoom: 1, selected: '' };
@@ -53,12 +53,12 @@
     const old = spec.config || {};
     spec.config = {
       ...old, background: '#ffffff',
-      title: { ...old.title, font: TITLE, subtitleFont: BODY, fontSize: 18, subtitleFontSize: 14, anchor: 'start', color: '#172c40' },
+      title: { ...old.title, font: TITLE, subtitleFont: BODY, fontSize: 18, fontWeight: 700, subtitleFontSize: 14, anchor: 'start', color: '#172c40' },
       axis: { ...old.axis, labelFont: BODY, titleFont: BODY, labelFontSize: 13, titleFontSize: 14,
         labelColor: '#405466', titleColor: '#405466', titleFontWeight: 600, labelPadding: 7,
         titlePadding: 12, gridColor: '#e7edf2', domainColor: '#c5d0da', tickColor: '#c5d0da' },
       legend: { ...old.legend, labelFont: BODY, titleFont: BODY, labelFontSize: 13, titleFontSize: 13,
-        titleFontWeight: 600, labelColor: '#405466', titleColor: '#405466', padding: 8 },
+        titleFontWeight: 600, titleLimit: 340, labelColor: '#405466', titleColor: '#405466', padding: 8 },
       text: { ...old.text, font: BODY, fontSize: 13 }
     };
     if (spec.$schema.includes('vega-lite')) {
@@ -96,7 +96,7 @@
           ? [-146.75, 19.3, 0] : [-138.6, 34.9, 0];
         p.height = sideBySide ? 310 : (i === 0 ? 280 : 250);
         p.title = { text: i === 0 ? (id === 'townsville-dot-map' ? 'Townsville divisions' : 'South Australia') :
-          (id === 'townsville-dot-map' ? 'Enlarged view · divisions 5–9' : 'Enlarged view · Adelaide'), font: TITLE, fontSize: 18, anchor: 'start' };
+          (id === 'townsville-dot-map' ? 'Detail · divisions 3, 5–9' : 'Enlarged view · Adelaide'), font: TITLE, fontSize: 18, anchor: 'start' };
       });
       spec[sideBySide ? 'hconcat' : 'vconcat'] = panels;
       spec.spacing = 20;
@@ -107,6 +107,7 @@
     spec.width = width;
     if (isLite) spec.autosize = { type: 'fit-x', contains: 'padding', resize: true };
     if (id === 'breed-chart') {
+      spec.layer[1].encoding.color.condition.value = '#A355BE';
       spec.height = { step: 32 };
       spec.encoding.y.axis.labelFontSize = 13;
       spec.width = width - 225;
@@ -115,12 +116,18 @@
       spec.encoding.x.axis.tickCount = 4;
     }
     if (id === 'council-breed-butterfly') {
+      walk(spec, obj => {
+        if (obj.value === '#0072B2') obj.value = '#B65AA4';
+        if (obj.value === '#B86B00') obj.value = '#E6AC24';
+      });
       spec.width = Math.max(580, available - 64);
       spec.height = 350;
       spec.padding = { left: 32, right: 32, top: 65, bottom: 65 };
       spec.autosize = { type: 'none', contains: 'content', resize: false };
     }
     if (id === 'townsville-complaints-slope') {
+      // Endpoint names identify categories; use orange for increases and cyan for decreases.
+      spec.scales.find(s => s.name === 'colour').range = ['#2896B5', '#2896B5', '#2896B5', '#F28E2B', '#F28E2B', '#2896B5'];
       spec.width = Math.max(240, available - 410);
       spec.height = 430;
       spec.padding = { left: 205, right: 205, top: 50, bottom: 55 };
@@ -139,8 +146,9 @@
       }
     }
     if (id === 'dog-map') {
+      spec.layer[1].mark.color = '#157A86';
       spec.height = 360;
-      walk(spec, obj => { if (obj.legend) { obj.legend.orient = 'bottom'; obj.legend.title = 'Casey · dog records'; obj.legend.offset = 8; } });
+      walk(spec, obj => { if (obj.legend) { obj.legend.orient = 'top'; obj.legend.direction = 'horizontal'; obj.legend.title = 'Dog records'; obj.legend.offset = 8; } });
       const dogsUrl = 'diagrams/casey_dogs_proportional_symbol_map/dogs_by_suburb.json';
       spec.layer.push(
         {
@@ -150,7 +158,7 @@
           encoding: {
             longitude: { field: 'Longitude', type: 'quantitative' },
             latitude: { field: 'Latitude', type: 'quantitative' },
-            size: { field: 'DogCount', type: 'quantitative', scale: { type: 'linear', domain: [0, 5000], range: [0, 2850] }, legend: null }
+            size: { field: 'DogCount', type: 'quantitative', scale: { type: 'linear', domain: [0, 5000], range: [0, 2200] }, legend: null }
           }
         },
         {
@@ -194,12 +202,17 @@
       );
     }
     if (id === 'registration-heatmap') {
+      // A visible neutral centre still denotes zero, with darker ends for magnitude.
+      spec.encoding.color.scale = { domain: [-0.6, 0, 0.6], range: ['#F07818', '#D0D0D0', '#00A0B5'], clamp: true };
+      spec.encoding.color.legend = { title: 'Change from 2018', titleLimit: 340, orient: 'top', direction: 'horizontal', format: '.0%', values: [-0.6, -0.3, 0, 0.3, 0.6], gradientLength: 280 };
+      spec.mark.stroke = '#FFFFFF';
+      spec.mark.strokeWidth = 1.5;
       // Use more of the left column. The seven group names still fit in the
       // reserved axis-label gutter, while the cells gain horizontal space.
       const leftGutter = 90;
       spec.width = width - leftGutter - 10;
       spec.height = 230;
-      spec.padding = { left: leftGutter, right: 10, top: 8, bottom: 104 };
+      spec.padding = { left: leftGutter, right: 10, top: 92, bottom: 40 };
       spec.autosize = { type: 'none', contains: 'content' };
       // Keep cell values in hover tooltips only.
     }
@@ -245,12 +258,17 @@
       const leftGutter = Math.ceil(Math.max(...breeds.map(name => measure.measureText(name).width))) + 18;
       const rightGutter = 20;
       spec.width = width - leftGutter - rightGutter;
-      spec.padding = { left: leftGutter, right: rightGutter, top: 10, bottom: 65 };
+      spec.padding = { left: leftGutter, right: rightGutter, top: 78, bottom: 65 };
       spec.autosize = { type: 'none', contains: 'content' };
       spec.height = { step: 32 };
-      spec.layer[1].encoding.color.scale.range = ['#B86B00', '#0072B2'];
+      spec.encoding.y.axis = { ...spec.encoding.y.axis, labelLimit: 0 };
+      spec.layer[1].encoding.color.scale.range = ['#FFFFFF', '#D12D67'];
+      spec.layer[1].encoding.color.legend = { orient: 'top', direction: 'horizontal', title: null, symbolType: 'circle' };
       // Colour differentiates the years; use one consistent circular shape.
       spec.layer[1].mark.shape = 'circle';
+      spec.layer[1].mark.stroke = '#D12D67';
+      spec.layer[1].mark.strokeWidth = 2;
+      spec.layer[1].mark.opacity = 1;
       delete spec.layer[1].encoding.shape;
     }
     if (id === 'dog-size-waffle') {
@@ -265,7 +283,7 @@
       signal('gridX').update = 'compact ? (width - gridSize) / 2 : max(8, (width - 510) / 2)';
       signal('legendX').update = 'compact ? 12 : gridX + gridSize + 28';
       signal('legendY').update = 'compact ? gridSize + 32 : 38';
-      spec.scales[0].range = ['#17658F', '#8364A9', '#D39A45'];
+      spec.scales[0].range = ['#A365C6', '#E6AC24', '#38AFB4'];
       for (const mark of spec.marks) {
         if (mark.from?.data !== 'sizes') continue;
         const enc = mark.encode.update;
@@ -279,7 +297,7 @@
     if (id === 'rspca-sankey') {
       spec.height = 480;
       spec.scales.find(s => s.name === 'outcomeColor').range =
-        ['#17658F', '#72A7CC', '#B87722', '#8364A9', '#C5A253', '#535D70', '#B5BAC2'];
+        ['#4AAB83', '#8BD5B5', '#F28E2B', '#A365C6', '#E6AC24', '#9D9DA7', '#C3C3CB'];
       // Reserve space inside the SVG for complete labels on both sides.
       spec.padding = 0;
       spec.autosize = { type: 'none', contains: 'padding' };
@@ -339,8 +357,8 @@
             encoding: {
               color: {
                 condition: { test: 'isValid(datum.properties.Share)', field: 'properties.Share', type: 'quantitative',
-                  scale: { domain: [0, .45], scheme: 'blues', clamp: true },
-                  legend: { title: 'Owners with 2+ dogs', orient: 'bottom', format: '.0%', gradientLength: Math.min(260, width - 20) }
+                  scale: { domain: [0, .45], range: ['#E3DCEE', '#522879'], clamp: true },
+                  legend: { title: 'Owners with 2+ dogs · share', orient: 'top', format: '.0%', gradientLength: Math.min(260, width - 20) }
                 }, value: '#E0E0E0'
               }, tooltip
             }
@@ -457,7 +475,7 @@
       zoom.setAttribute('aria-valuetext', `${saState.zoom.toFixed(1)} times the surrounding-area view${saState.zoom === 3 ? ', selected area only' : ''}`);
       const feature = saFeatures.find(f => f.properties.LGA_NAME_2025 === saState.selected);
       if (!feature) {
-        detail.textContent = 'Overview: darker blue means a higher share of recorded owners with two or more dogs. The detail map starts with Adelaide metropolitan councils.';
+        detail.textContent = 'Overview: darker purple means a higher share of recorded owners with two or more dogs. The detail map starts with Adelaide metropolitan councils.';
         return;
       }
       const p = feature.properties;
@@ -765,6 +783,7 @@
       const division = Number(feature.properties.Division);
 
       feature.properties.Division = division;
+      feature.properties.OverviewLabel = division === 3 ? '3, 5–9' : String(division);
       feature.properties.DivisionName =
         `Electoral Division ${division}`;
 
@@ -869,35 +888,28 @@
             }
           },
 
-          {
+          // Halo and foreground share positions: borders remain readable under dots.
+          ...[true, false].map(halo => ({
             data: { values: selected },
-
+            transform: selected.length === 10
+              ? [{ filter: 'indexof([1,2,3,4,10], datum.properties.Division) >= 0' }]
+              : [],
             mark: {
-              type: "text",
-              fontSize: 12,
-              fontWeight: "bold",
-              color: "#152D34",
-              dy: -6
+              type: 'text', fontSize: selected.length === 10 ? 15 : 17,
+              fontWeight: 700, color: halo ? '#FFFFFF' : '#172C40',
+              ...(halo ? { stroke: '#FFFFFF', strokeWidth: 5, strokeJoin: 'round' } : {}),
+              dx: selected.length === 10 ? 0 : { expr: "datum.properties.Division === 5 ? -8 : datum.properties.Division === 6 ? 6 : 0" },
+              dy: selected.length === 10 ? -8 : { expr: "datum.properties.Division === 5 ? 3 : datum.properties.Division === 6 ? 14 : -8" }
             },
-
             encoding: {
-              longitude: {
-                field: "properties.LabelLongitude",
-                type: "quantitative"
-              },
-
-              latitude: {
-                field: "properties.LabelLatitude",
-                type: "quantitative"
-              },
-
-              text: {
-                field: "properties.Division"
-              },
-
+              longitude: { field: 'properties.LabelLongitude', type: 'quantitative' },
+              latitude: { field: 'properties.LabelLatitude', type: 'quantitative' },
+              text: selected.length === 10
+                ? { field: 'properties.OverviewLabel' }
+                : { field: 'properties.Division' },
               tooltip
             }
-          }
+          }))
         ]
       };
     }
@@ -914,9 +926,9 @@
 
         panel(
           features.filter(f =>
-            [5, 6, 7, 8, 9].includes(f.properties.Division)
+            [3, 5, 6, 7, 8, 9].includes(f.properties.Division)
           ),
-          "Enlarged view · divisions 5–9 · same dot value",
+          "Detail · divisions 3, 5–9 · same dot value",
           280
         )
       ],

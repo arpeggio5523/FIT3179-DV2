@@ -11,9 +11,9 @@ html { scroll-behavior:smooth; }
 body { margin:0; background:#fff; color:var(--body); font:17px/1.5 var(--sans); }
 main { width:100%; padding:28px clamp(18px,3vw,56px) 32px; }
 h1,h2,h3 { font-family:var(--serif); font-weight:600; color:var(--ink); text-wrap:balance; }
-h1 { margin:4px 0 0; font-size:clamp(40px,4vw,62px); line-height:1.08; letter-spacing:-.03em; }
-h2 { margin:0; font-size:clamp(28px,2.4vw,38px); line-height:1.2; letter-spacing:-.02em; }
-h3 { margin:0 0 10px; font-size:clamp(23px,1.7vw,29px); line-height:1.25; letter-spacing:-.015em; }
+h1 { font-weight:800; margin:4px 0 0; font-size:clamp(40px,4vw,62px); line-height:1.08; letter-spacing:-.03em; }
+h2 { font-weight:800; margin:0; font-size:clamp(28px,2.4vw,38px); line-height:1.2; letter-spacing:-.02em; }
+h3 { font-weight:700; margin:0 0 10px; font-size:clamp(23px,1.7vw,29px); line-height:1.25; letter-spacing:-.015em; }
 p { margin:0 0 12px; max-width:60ch; }
 strong { font-weight:650; color:var(--ink); }
 a { color:var(--accent); text-underline-offset:3px; overflow-wrap:anywhere; }
@@ -27,7 +27,7 @@ a:hover { color:var(--ink); }
 .chapter-nav { display:flex; flex-wrap:wrap; gap:8px 28px; padding:12px 0; margin-top:12px; }
 .chapter-nav a { font-size:15px; font-weight:600; text-decoration:none; }
 .chapter-nav a:hover { text-decoration:underline; }
-.chapter { margin-top:60px; padding-top:22px; border-top:2px solid var(--line); }
+.chapter { margin-top:clamp(76px,7vw,104px); padding-top:30px; border-top:2px solid var(--line); }
 /* One horizontal rule per major chapter, above the chapter heading only. */
 .chapter-header { display:grid; grid-template-columns:1fr 1fr; column-gap:var(--gap); margin:0 0 28px; align-items:end; }
 .chapter-header .eyebrow,.chapter-header h2 { grid-column:1; }
@@ -172,3 +172,10 @@ footer p { color:var(--muted); font-size:13px; margin:0; }
   .chart-scroll { overflow:visible; }
   .chart-scroll svg { max-width:100%; height:auto; }
 }
+
+/* Shared key stays above both dot-map panels, including after responsive redraws. */
+.dot-map-key { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; margin:0 0 12px; font-size:15px; color:var(--ink); }
+.dot-map-key .dot-swatch { width:5px; height:5px; flex:0 0 5px; background:#157A86; opacity:.8; border-radius:50%; }
+.dot-map-key .key-note { flex-basis:100%; font-size:14px; color:var(--muted); }
+#section-map-heading .casey-fact strong { color:#157A86; }
+@media (max-width:700px) { .chapter { margin-top:64px; padding-top:24px; } }

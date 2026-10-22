@@ -10,7 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 <!-- Typography and layout are defined in style.css. -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&amp;display=swap" rel="stylesheet"/><link href="style.css" rel="stylesheet"/><style>#section-complaints-heading[hidden] { display: none !important; }</style>
+<link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700;8..60,800&amp;display=swap" rel="stylesheet"/><link href="style.css" rel="stylesheet"/><style>#section-complaints-heading[hidden] { display: none !important; }</style>
 </head>
 <body>
 <main>
@@ -49,7 +49,7 @@
 <!-- LOLLIPOP -->
 <div class="chart-pair"><article aria-labelledby="breed-heading" class="chart-section" id="section-breed-heading"><div class="chart-copy"><p class="chart-kicker">South Australia · May 2025</p><h3 id="breed-heading">
           Kelpies lead South Australia’s recorded breeds
-        </h3><p>Kelpies and Border Collies share a history of working with<br/>livestock in Australia. Their trainability and enthusiasm for activity may<br/>appeal beyond farms to owners who enjoy outdoor routines. Yet<br/>these traits also demand time and stimulation, reminding us that<br/>popular breeds are not necessarily suitable for every household.</p></div>
+        </h3><p>Kelpies and Border Collies share a history of working with livestock in Australia. Their trainability and enthusiasm for activity may appeal beyond farms to owners who enjoy outdoor routines. Yet these traits also demand time and stimulation, reminding us that popular breeds are not necessarily suitable for every household.</p></div>
 <div class="chart-panel"><div aria-labelledby="breed-heading" class="chart-scroll" role="region" tabindex="0">
 <div aria-label="Top ten South Australian breed and crossbreed entries by recorded count, 30 May 2025." class="chart" id="breed-chart"></div>
 </div></div><div class="chart-meta"><p class="chart-citation">Data: <a href="#ref-dacobreeds">(Dog and Cat Management Board, 2025b)</a></p></div></article><article aria-labelledby="council-butterfly-heading" class="chart-section story-row story-reverse" id="section-council-butterfly-heading"><div class="story-copy"><div class="chart-copy"><p class="chart-kicker">South Australia · 68 councils</p><h3 id="council-butterfly-heading">Local favourites differ between breed and cross entries</h3><p>Why do breed and crossbreed labels differ between councils? Crossbreed entries may reflect companion dog preferences, but classification practices can also shape the comparison. A Maltese Cross is a recorded category rather than proof of a particular ancestry. Differences between these entries should therefore not be interpreted as direct evidence of owners choosing purebred over mixed dogs.</p></div><div class="chart-meta"><p class="chart-citation">Data: <a href="#ref-dacotop5">(Dog and Cat Management Board, n.d.)</a></p></div></div><div class="chart-panel"><div aria-labelledby="council-butterfly-heading" class="chart-scroll" role="region" tabindex="0"><div aria-label="Butterfly chart comparing council appearances for seven breed and cross label pairs." class="chart" id="council-breed-butterfly"></div></div></div></article></div>
@@ -69,7 +69,7 @@
 <!-- PROPORTIONAL SYMBOL MAP -->
 <div class="map-pair"><article aria-labelledby="map-heading" class="chart-section story-row" id="section-map-heading"><div class="story-copy"><div class="chart-copy"><p class="chart-kicker">City of Casey · August 2024</p><h3 id="map-heading">
           Berwick has the most dog records in Casey
-        </h3><p>Berwick's prominent total could partly reflect its residential scale and the number of households able to register dogs.<br/>Larger suburbs can accumulate more records without having a<br/>greater share of dog-owning residents. <br/>Comparing registrations against local population or households would help distinguish the size of a suburb <br/> from its preference for dogs.</p><div aria-label="Casey registration comparisons" class="casey-facts">
+        </h3><p>Berwick's prominent total could partly reflect its residential scale and the number of households able to register dogs. Larger suburbs can accumulate more records without having a greater share of dog-owning residents.  Comparing registrations against local population or households would help distinguish the size of a suburb   from its preference for dogs.</p><div aria-label="Casey registration comparisons" class="casey-facts">
 <div class="casey-fact"><strong>18.0%</strong><span>of Casey’s recorded dogs are in Berwick</span></div>
 <div class="casey-fact"><strong>2.05×</strong><span>as many as Narre Warren South</span></div>
 </div></div><div class="chart-meta"><p class="chart-citation">Data: (<a href="#ref-casey-suburb">City of Casey, n.d.-a</a>; <a href="#ref-casey-insights">City of Casey, n.d.-b</a>)</p></div></div>
@@ -78,14 +78,14 @@
 </div></div></article><article aria-labelledby="townsville-map-heading" class="chart-section story-row story-reverse" id="section-townsville-map-heading"><div class="story-copy"><div class="chart-copy"><p class="chart-kicker">Townsville · March 2026</p><h3 id="townsville-map-heading">
           Townsville’s records span ten divisions
         </h3><p>Different divisions contain different numbers and types of households, which could help explain uneven registration totals. Residential development, available housing and local population may matter more than a unique preference for dogs. Denser clusters should not automatically be read as higher ownership rates.</p></div><div class="chart-meta"><p class="chart-citation">Data: (<a href="#ref-tcc-reg">Townsville City Council, 2026</a>; <a href="#ref-tcc-divisions">Townsville City Council, n.d.</a>)</p></div></div>
-<div class="chart-panel"><div aria-labelledby="townsville-map-heading" class="chart-scroll" role="region" tabindex="0">
+<div class="chart-panel"><div class="dot-map-key" aria-label="Dot map legend"><span class="dot-swatch" aria-hidden="true"></span><strong>1 dot ≈ 50 dog records</strong><span class="key-note">Numbers identify electoral divisions; the clustered divisions 3 and 5–9 are labelled individually in the detail view. Same dot value in both views. Dots are placed within divisions, not at household addresses; totals are rounded to the nearest dot.</span></div><div aria-labelledby="townsville-map-heading" class="chart-scroll" role="region" tabindex="0">
 <div aria-label="Dot-density map of Townsville dog records, March 2026." id="townsville-dot-map"></div>
 </div></div></article></div>
 <!-- DOT-DENSITY MAP -->
 <!-- CHOROPLETH -->
 <article aria-labelledby="sa-ownership-heading" class="chart-section story-row" id="section-sa-ownership-heading"><div class="story-copy"><div class="chart-copy"><p class="chart-kicker">South Australia · May 2025</p><h3 id="sa-ownership-heading">
           Multiple-dog ownership varies between councils
-        </h3><p>The contrast between Adelaide Plains and central Adelaide may<br/>relate to differences in housing and everyday routines. Larger<br/>properties could make keeping several dogs more practical, while compact urban homes may create constraints. These are<br/>plausible explanations rather than measured causes.</p></div><div class="chart-meta"><p class="chart-citation">Data: (<a href="#ref-dacoowners">Dog and Cat Management Board, 2025a</a>; <a href="#ref-abs-lga">Australian Bureau of Statistics, 2025</a>)</p></div></div>
+        </h3><p>The contrast between Adelaide Plains and central Adelaide may relate to differences in housing and everyday routines. Larger properties could make keeping several dogs more practical, while compact urban homes may create constraints. These are plausible explanations rather than measured causes.</p></div><div class="chart-meta"><p class="chart-citation">Data: (<a href="#ref-dacoowners">Dog and Cat Management Board, 2025a</a>; <a href="#ref-abs-lga">Australian Bureau of Statistics, 2025</a>)</p></div></div>
 <div class="chart-panel"><div aria-labelledby="sa-ownership-heading" class="chart-scroll" role="region" tabindex="0">
 <div aria-label="South Australian council choropleth of the share of recorded owners with two or more dogs." id="sa-ownership-map"></div>
 </div></div></article>
@@ -103,9 +103,9 @@
 <!-- HEATMAP -->
 <div class="change-grid"><article aria-labelledby="registration-heading" class="chart-section feature-row" id="section-registration-heading"><div class="chart-copy"><p class="chart-kicker">Dogs Australia · 2018–2025</p><h3 id="registration-heading">
           All seven groups finish below their 2018 totals
-        </h3><p id="registration-summary">Declines across registered breed groups raise a broader question<br/>about how Australians acquire dogs. Changes in demand for<br/>pedigree registrations, crossbreeds or registration activity could all affect these figures. However, the series tracks Dogs Australia registrations rather than every dog owned nationally, so falling totals<br/>should not automatically be interpreted as falling dog ownership.</p></div>
+        </h3><p id="registration-summary">Declines across registered breed groups raise a broader question about how Australians acquire dogs. Changes in demand for pedigree registrations, crossbreeds or registration activity could all affect these figures. However, the series tracks Dogs Australia registrations rather than every dog owned nationally, so falling totals should not automatically be interpreted as falling dog ownership.</p></div>
 <div class="chart-panel"><div aria-labelledby="registration-heading" class="chart-scroll" role="region" tabindex="0">
-<div aria-label="Registration change by dog group, relative to 2018." class="chart" id="registration-heatmap"></div>
+<p class="note">Orange = decrease · grey = no change · cyan = increase, relative to each group’s 2018 total.</p><div aria-label="Registration change by dog group, relative to 2018." class="chart" id="registration-heatmap"></div>
 </div></div><div class="chart-meta"><p class="chart-citation">Data: <a href="#ref-dogs-australia">(Dogs Australia, n.d.)</a></p></div></article><article aria-labelledby="townsville-ranks-heading" class="chart-section" id="section-townsville-ranks-heading"><div class="chart-copy"><p class="chart-kicker">Townsville · March 2023–2026</p><h3 id="townsville-ranks-heading">
           Miniature Dachshund climbs from 32nd to 13th
         </h3><p>The Miniature Dachshund's rapid rise may reflect Australia's growing preference for smaller companion dogs. Rising living costs and smaller homes may favour compact breeds. Their distinctive appearance and social-media visibility also contribute to demand. </p></div>
@@ -113,9 +113,9 @@
 <div aria-label="Townsville breed rankings, March 2023 to March 2026." class="chart" id="townsville-bump"></div>
 </div></div><div class="chart-meta"><p class="chart-citation">Data: <a href="#ref-tcc-reg">(Townsville City Council, 2026)</a></p></div></article><article aria-labelledby="townsville-counts-heading" class="chart-section feature-row" id="section-townsville-counts-heading"><div class="chart-copy"><p class="chart-kicker">Townsville · March 2023 and 2026</p><h3 id="townsville-counts-heading">
           The rise in rank comes with more recorded dogs
-        </h3><p>The Miniature Dachshund's improved rank also reflects a larger recorded count, not merely other breeds moving down. <br/> Its compact size may appeal to some households, <br/> but smaller dogs still need suitable exercise, training and care. <br/>Negative stereotypes surrounding bull-type dogs may influence prospective owners, despite breed alone poorly predicting <br/> aggressive behaviour.</p></div>
+        </h3><p>The Miniature Dachshund's improved rank also reflects a larger recorded count, not merely other breeds moving down.   Its compact size may appeal to some households,   but smaller dogs still need suitable exercise, training and care.  Negative stereotypes surrounding bull-type dogs may influence prospective owners, despite breed alone poorly predicting   aggressive behaviour.</p></div>
 <div class="chart-panel"><div aria-labelledby="townsville-counts-heading" class="chart-scroll" role="region" tabindex="0">
-<div aria-label="Six Townsville breed counts compared between March 2023 and March 2026." class="chart" id="townsville-connected-dots"></div>
+<p class="note">Hollow raspberry circle = March 2023 · filled raspberry circle = March 2026.</p><div aria-label="Six Townsville breed counts compared between March 2023 and March 2026." class="chart" id="townsville-connected-dots"></div>
 </div></div><div class="chart-meta"><p class="chart-citation">Data: <a href="#ref-tcc-reg">(Townsville City Council, 2026)</a></p></div></article></div>
 <!-- BUMP CHART -->
 <!-- CONNECTED DOT PLOT -->
@@ -137,7 +137,7 @@
 <!-- SANKEY -->
 <article aria-labelledby="rspca-heading" class="chart-section story-row" id="section-rspca-heading"><div class="story-copy"><div class="chart-copy"><p class="chart-kicker">RSPCA societies · 2024–2025</p><h3 id="rspca-heading">
           Rehoming is the largest recorded category
-        </h3><p>Rehoming represents a major pathway for dogs entering RSPCA<br/>care, highlighting the importance of finding suitable new households.<br/>Other outcomes reflect different circumstances, including owners being reunited with animals or dogs remaining in care. These pathways may depend on individual needs and available support, rather than simply indicating how well each society performs.</p></div><div class="chart-meta"><p class="chart-citation">Data: <a href="#ref-rspca">(RSPCA Australia, 2025)</a></p><p class="chart-resource">
+        </h3><p>Rehoming represents a major pathway for dogs entering RSPCA care, highlighting the importance of finding suitable new households. Other outcomes reflect different circumstances, including owners being reunited with animals or dogs remaining in care. These pathways may depend on individual needs and available support, rather than simply indicating how well each society performs.</p></div><div class="chart-meta"><p class="chart-citation">Data: <a href="#ref-rspca">(RSPCA Australia, 2025)</a></p><p class="chart-resource">
 <a download="" href="diagrams/rspca_dog_outcomes_sankey/rspca_dog_outcomes_2024_2025.csv">
               Download the plotted counts (CSV)
             </a>
@@ -185,7 +185,7 @@
 <footer>
 <p>
 <strong>Created by:</strong>
-        Lee Jia Wey· FIT3179 Data Visualisation 2 · Updated 13 October 2026.
+        Lee Jia Wey· FIT3179 Data Visualisation 2 · Updated 17 October 2026.
       </p>
 <p>
 <strong>AI acknowledgement:</strong>
