@@ -178,10 +178,10 @@
             "field": "Category"
           },
           "strokeWidth": {
-            "value": 3
+            "signal": "focus === datum.Category || datum.Category === 'Noise' || datum.Category === 'Aggressive animal' ? 3 : 1.4"
           },
           "opacity": {
-            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+            "signal": "focus === null ? 1 : (focus === datum.Category ? 1 : 0.2)"
           },
           "tooltip": {
             "signal": "{'Category':datum.Category, 'Earlier year':datum.StartYear, 'Earlier complaints':datum.Start, 'Later year':datum.EndYear, 'Later complaints':datum.End, 'Change':datum.End-datum.Start}"
@@ -206,14 +206,14 @@
             "field": "Count"
           },
           "size": {
-            "value": 85
+            "signal": "datum.Category === 'Noise' || datum.Category === 'Aggressive animal' ? 85 : 40"
           },
           "fill": {
             "scale": "colour",
             "field": "Category"
           },
           "opacity": {
-            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+            "signal": "focus === null ? 1 : (focus === datum.Category ? 1 : 0.2)"
           },
           "tooltip": {
             "signal": "{'Category':datum.Category, 'Earlier year':datum.StartYear, 'Earlier complaints':datum.Start, 'Later year':datum.EndYear, 'Later complaints':datum.End, 'Change':datum.End-datum.Start}"
@@ -247,7 +247,7 @@
             "field": "Category"
           },
           "opacity": {
-            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+            "signal": "focus === null ? 1 : (focus === datum.Category ? 1 : 0.2)"
           }
         }
       }
@@ -279,10 +279,13 @@
             "value": 13
           },
           "fill": {
-            "value": "#172c40"
+            "signal": "datum.Category === 'Noise' || datum.Category === 'Aggressive animal' ? '#172c40' : '#63717b'"
           },
           "opacity": {
-            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+            "signal": "focus === null ? 1 : (focus === datum.Category ? 1 : 0.2)"
+          },
+          "fontWeight": {
+            "signal": "datum.Category === 'Noise' || datum.Category === 'Aggressive animal' ? 700 : 400"
           }
         }
       }
@@ -313,7 +316,7 @@
             "field": "Category"
           },
           "opacity": {
-            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+            "signal": "focus === null ? 1 : (focus === datum.Category ? 1 : 0.2)"
           }
         }
       }
@@ -345,10 +348,13 @@
             "value": 13
           },
           "fill": {
-            "value": "#172c40"
+            "signal": "datum.Category === 'Noise' || datum.Category === 'Aggressive animal' ? '#172c40' : '#63717b'"
           },
           "opacity": {
-            "signal": "focus === null || focus === datum.Category ? 1 : 0.18"
+            "signal": "focus === null ? 1 : (focus === datum.Category ? 1 : 0.2)"
+          },
+          "fontWeight": {
+            "signal": "datum.Category === 'Noise' || datum.Category === 'Aggressive animal' ? 700 : 400"
           }
         }
       }

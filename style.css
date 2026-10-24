@@ -53,11 +53,11 @@ a:hover { color:var(--ink); }
 .home-grid > .chapter-header { grid-column:1/-1; margin-bottom:0; }
 .home-grid .chart-pair { display:contents; }
 .home-grid .story-row { grid-column:1/-1; }
-.story-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr); gap:var(--gap); align-items:start; margin-top:44px; padding-top:0; }
+.story-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--gap); align-items:start; margin-top:44px; padding-top:0; }
 .story-row .chart-panel { margin-top:0; }
 .story-copy { padding-top:6px; }
 .story-copy .chart-context { margin-top:20px; }
-.story-reverse { grid-template-columns:minmax(0,2fr) minmax(0,1fr); }
+.story-reverse { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
 .story-reverse .story-copy { grid-column:2; grid-row:1; }
 .story-reverse .chart-panel { grid-column:1; grid-row:1; }
 .map-pair > .story-row:first-child { margin-top:0; }
@@ -73,22 +73,6 @@ a:hover { color:var(--ink); }
 #section-registration-heading { grid-column:1; grid-row:1; }
 #section-townsville-counts-heading { grid-column:1; grid-row:2; }
 #section-townsville-ranks-heading { grid-column:2; grid-row:1 / span 2; }
-/* Align the bump-chart's methodological note and source with the 2023 plot axis,
-   rather than the left edge of the SVG (which includes its y-axis labels). */
-@media (min-width:1251px) {
-  /* Nudge only the two left-column figures into the unused gutter.
-     Extra width stays within the existing inter-column gap. */
-  #section-registration-heading .chart-panel,
-  #section-townsville-counts-heading .chart-panel {
-    margin-left:-12px;
-    width:calc(100% + 12px);
-  }
-  #section-townsville-ranks-heading .chart-context,
-  #section-townsville-ranks-heading .chart-meta {
-    margin-left:68px;
-    max-width:calc(100% - 68px);
-  }
-}
 /* Different chart heights are natural; their outer column edges remain aligned. */
 #section-townsville-counts-heading h3 { font-size:23px; }
 .chart-scroll { width:100%; min-width:0; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; }
@@ -179,3 +163,99 @@ footer p { color:var(--muted); font-size:13px; margin:0; }
 .dot-map-key .key-note { flex-basis:100%; font-size:14px; color:var(--muted); }
 #section-map-heading .casey-fact strong { color:#157A86; }
 @media (max-width:700px) { .chapter { margin-top:64px; padding-top:24px; } }
+
+/* Shared page grid: text and figures follow the same two column edges. */
+.chapter { margin-top:44px; padding-top:24px; }
+.chapter-nav { margin-top:8px; padding:8px 0; gap:8px 24px; }
+.chapter-nav + .chapter { margin-top:24px; }
+.chapter-header { margin-bottom:24px; }
+.home-grid { row-gap:24px; }
+.story-row, .map-pair > .story-row + .story-row,
+.map-pair + .story-row { margin-top:32px; }
+.home-grid .story-row, #section-complaints-heading .story-row,
+#section-rspca-heading { margin-top:0; }
+.story-copy { padding-top:0; }
+.story-reverse .story-copy { grid-column:1; grid-row:1; }
+.story-reverse .chart-panel { grid-column:2; grid-row:1; }
+.change-grid { display:grid; grid-template-columns:1fr; gap:32px; }
+.change-grid .chart-section { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:0 var(--gap); }
+.change-grid #section-registration-heading,
+.change-grid #section-townsville-ranks-heading,
+.change-grid #section-townsville-counts-heading { grid-column:1; grid-row:auto; order:initial; }
+.change-grid .chart-copy { grid-column:1; grid-row:1; }
+.change-grid .chart-panel { grid-column:2; grid-row:1 / span 3; margin-top:0; }
+.change-grid .chart-meta { grid-column:1; align-self:start; margin-top:10px; }
+.change-grid .chart-section { align-content:start; grid-template-rows:min-content min-content 1fr; }
+#section-townsville-counts-heading h3 { font-size:clamp(23px,1.7vw,29px); }
+.story-row, .story-reverse { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+.chart-key { display:flex; flex-wrap:wrap; gap:6px 18px; margin:0 0 10px; font-size:14px; }
+.chart-key span { display:inline-flex; align-items:center; gap:7px; }
+.key-line { display:inline-block; width:22px; border-top:3px solid; }
+.key-noise { color:#2896B5; }
+.key-aggression { color:#F28E2B; }
+.key-context { color:#a1aab3; }
+.references { margin-top:40px; }
+@media (min-width:901px) {
+  .home-grid > .feature-row, .home-grid .chart-pair > .chart-section:not(.story-row) {
+    display:grid; grid-template-rows:subgrid; grid-row:span 3; row-gap:12px;
+  }
+  .home-grid .chart-panel, .home-grid .chart-meta { margin-top:0; }
+}
+@media (max-width:900px) {
+  .change-grid .chart-section, .story-row, .story-reverse { display:flex; flex-direction:column; gap:14px; }
+  .chapter { margin-top:32px; }
+  .chapter-nav + .chapter { margin-top:20px; }
+}
+
+/* Separate each idiom with space, while keeping its own text and figure close. */
+.story-row, .map-pair > .story-row + .story-row,
+.map-pair + .story-row { margin-top:64px; }
+.home-grid .story-row { margin-top:28px; }
+.change-grid { gap:64px; }
+.chapter { margin-top:64px; padding-top:28px; }
+.chapter-nav + .chapter { margin-top:24px; }
+#sa-council-detail[hidden] { display:none; }
+@media (min-width:901px) {
+  #section-townsville-map-heading .chart-panel { grid-column:1; grid-row:1; }
+  #section-townsville-map-heading .story-copy { grid-column:2; grid-row:1; }
+
+}
+@media (max-width:900px) {
+  .story-row, .map-pair > .story-row + .story-row,
+  .map-pair + .story-row { margin-top:44px; }
+  .change-grid { gap:44px; }
+  .chapter { margin-top:48px; }
+}
+
+/* Give the Sankey more horizontal room while retaining the side-by-side story. */
+@media (min-width:901px) {
+  #section-rspca-heading { grid-template-columns:minmax(0,1fr) minmax(0,1.65fr); }
+}
+
+/* Fit complete figures inside their columns instead of requiring sideways scrolling. */
+.chart-scroll { overflow:visible; }
+.chart-scroll .vega-embed, .chart-scroll .vega-embed > div { max-width:100%; min-width:0; }
+.chart-scroll svg { max-width:100%; height:auto; }
+.breed-change-pair { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px var(--gap); min-width:0; }
+.change-grid .breed-change-pair .chart-section { display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:subgrid; gap:14px; }
+.change-grid .breed-change-pair #section-townsville-counts-heading { grid-column:1; grid-row:1 / span 3; }
+.change-grid .breed-change-pair #section-townsville-ranks-heading { grid-column:2; grid-row:1 / span 3; }
+.change-grid .breed-change-pair .chart-copy { grid-column:1; grid-row:1; }
+.change-grid .breed-change-pair .chart-panel { grid-column:1; grid-row:2; margin-top:0; }
+.change-grid .breed-change-pair .chart-meta { grid-column:1; grid-row:3; margin-top:0; }
+@media (min-width:901px) {
+  section[aria-labelledby="care-heading"] > .chapter-header {
+    grid-template-columns:minmax(0,1fr) minmax(0,1.65fr);
+  }
+}
+@media (max-width:900px) {
+  .breed-change-pair { display:flex; flex-direction:column; gap:44px; }
+  .change-grid .breed-change-pair .chart-section { display:flex; flex-direction:column; gap:14px; }
+}
+
+/* Keep the dot plot clear of the neighbouring bump chart without shifting headings. */
+@media (min-width:901px) {
+  .change-grid .breed-change-pair #section-townsville-counts-heading .chart-panel {
+    padding-right:clamp(32px,4vw,72px);
+  }
+}

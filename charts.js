@@ -126,19 +126,28 @@
       spec.autosize = { type: 'none', contains: 'content', resize: false };
     }
     if (id === 'townsville-complaints-slope') {
-      // Endpoint names identify categories; use orange for increases and cyan for decreases.
-      spec.scales.find(s => s.name === 'colour').range = ['#2896B5', '#2896B5', '#2896B5', '#F28E2B', '#F28E2B', '#2896B5'];
+      // Highlight the largest absolute fall and rise; retain other categories as context.
+      spec.scales.find(s => s.name === 'colour').range = ['#2896B5', '#A1AAB3', '#A1AAB3', '#F28E2B', '#A1AAB3', '#A1AAB3'];
       spec.width = Math.max(240, available - 410);
-      spec.height = 430;
+      spec.height = 340;
       spec.padding = { left: 205, right: 205, top: 50, bottom: 55 };
       spec.autosize = { type: 'none', contains: 'content', resize: false };
       const rows = spec.data.find(d => d.name === 'complaints').values;
-      const ymax = vega.scale('linear')().domain([0, Math.max(...rows.flatMap(d => [d.Start,d.End])) || 1]).nice().domain()[1];
-      spec.scales.find(s => s.name === 'y').domain = [0, ymax];
+      // A slope chart compares positions, not bar lengths. Show the occupied range,
+      // and disclose the non-zero baseline in its caption.
+      const ymin = 500, ymax = 1400;
+      const yScale = spec.scales.find(s => s.name === 'y');
+      yScale.domain = [ymin, ymax];
+      yScale.zero = false;
+      yScale.nice = false;
+      spec.axes[0].values = [600, 800, 1000, 1200, 1400];
+      spec.marks[spec.marks.length - 1].encode.update.text = {
+        value: 'Shared count scale: 500–1,400 · zero omitted'
+      };
       for (const side of ['Start', 'End']) {
         const ordered = [...rows].sort((a,b) => b[side]-a[side]);
         let previous = -26;
-        ordered.forEach(d => { d['Label'+side] = Math.max(spec.height * (1-d[side]/ymax), previous+26); previous=d['Label'+side]; });
+        ordered.forEach(d => { d['Label'+side] = Math.max(spec.height * (ymax-d[side])/(ymax-ymin), previous+26); previous=d['Label'+side]; });
         if (previous > spec.height) {
           ordered[ordered.length-1]['Label'+side] = spec.height;
           for (let i=ordered.length-2;i>=0;i--) ordered[i]['Label'+side] = Math.min(ordered[i]['Label'+side],ordered[i+1]['Label'+side]-26);
@@ -212,7 +221,7 @@
       const leftGutter = 90;
       spec.width = width - leftGutter - 10;
       spec.height = 230;
-      spec.padding = { left: leftGutter, right: 10, top: 92, bottom: 40 };
+      spec.padding = { left: leftGutter, right: 10, top: 60, bottom: 40 };
       spec.autosize = { type: 'none', contains: 'content' };
       // Keep cell values in hover tooltips only.
     }
@@ -224,7 +233,7 @@
         'Staffordshire Bull Terrier', 'Jack Russell Terrier', 'Dachshund', 'Miniature Dachshund'];
       const labelGutter = Math.ceil(Math.max(...endpointLabels.map(text => measure.measureText(text).width))) + 22;
       spec.width = width - 55 - labelGutter;
-      spec.height = 610;
+      spec.height = 460;
       spec.padding = { left: 55, top: 16, right: labelGutter, bottom: 72 };
       // Let the first and last year reach the plot edges rather than inset by half a step.
       spec.encoding.x.scale = { ...spec.encoding.x.scale, padding: 0 };
@@ -258,7 +267,7 @@
       const leftGutter = Math.ceil(Math.max(...breeds.map(name => measure.measureText(name).width))) + 18;
       const rightGutter = 20;
       spec.width = width - leftGutter - rightGutter;
-      spec.padding = { left: leftGutter, right: rightGutter, top: 78, bottom: 65 };
+      spec.padding = { left: leftGutter, right: rightGutter, top: 42, bottom: 40 };
       spec.autosize = { type: 'none', contains: 'content' };
       spec.height = { step: 32 };
       spec.encoding.y.axis = { ...spec.encoding.y.axis, labelLimit: 0 };
@@ -272,26 +281,24 @@
       delete spec.layer[1].encoding.shape;
     }
     if (id === 'dog-size-waffle') {
-      // Size the tiles and legend together, rather than leaving an empty panel.
-      const compact = width < 540;
-      const legendColumns = compact && width >= 390;
-      const gridSize = Math.min(280, width - 16);
-      spec.height = compact ? gridSize + (legendColumns ? 86 : 190) : 304;
+      const stacked = width < 440;
+      const keyHeight = stacked ? 144 : 62;
       const signal = name => spec.signals.find(s => s.name === name);
-      signal('compact').update = 'width < 540';
       signal('gridSize').update = 'min(280, width - 16)';
-      signal('gridX').update = 'compact ? (width - gridSize) / 2 : max(8, (width - 510) / 2)';
-      signal('legendX').update = 'compact ? 12 : gridX + gridSize + 28';
-      signal('legendY').update = 'compact ? gridSize + 32 : 38';
+      signal('gridX').update = '8';
+      signal('legendX').update = '8';
+      signal('legendY').update = '4';
+      spec.height = Math.min(280, width - 16) + keyHeight + 10;
       spec.scales[0].range = ['#A365C6', '#E6AC24', '#38AFB4'];
+      spec.marks.find(m => m.name === 'sizeTiles').encode.update.y = { signal: `${keyHeight} + datum.row*step` };
       for (const mark of spec.marks) {
         if (mark.from?.data !== 'sizes') continue;
         const enc = mark.encode.update;
         const text = mark.type === 'text';
         const secondary = Boolean(enc.text?.field);
-        enc.x = { signal: `legendX + ${legendColumns ? 'datum.Order * (width / 3) + ' : ''}${text ? 23 : 0}` };
-        enc.y = { signal: `legendY + ${legendColumns ? '' : 'datum.Order * (compact ? 50 : 86) + '}${text ? (secondary ? 31 : 13) : 0}` };
-        if (text) enc.fontSize = { value: secondary ? 13 : 16 };
+        enc.x = { signal: `legendX + ${stacked ? '' : 'datum.Order * ((width - 16) / 3) + '}${text ? 23 : 0}` };
+        enc.y = { signal: `legendY + ${stacked ? 'datum.Order * 46 + ' : ''}${text ? (secondary ? 31 : 13) : 0}` };
+        if (text) enc.fontSize = { value: secondary ? 13 : 15 };
       }
     }
     if (id === 'rspca-sankey') {
@@ -301,8 +308,23 @@
       // Reserve space inside the SVG for complete labels on both sides.
       spec.padding = 0;
       spec.autosize = { type: 'none', contains: 'padding' };
-      spec.signals.find(s => s.name === 'sourceX').update = '220';
-      spec.signals.find(s => s.name === 'targetX').update = 'width - 210';
+      // Fit gutters to the actual labels, leaving more width for the flows.
+      // Labels remain inside the chart column, clear of the story paragraph.
+      const measure = document.createElement('canvas').getContext('2d');
+      measure.font = `700 13px "${BODY}", Arial, sans-serif`;
+      const sourceGutter = Math.ceil(measure.measureText('Australian Capital Territory').width) + 25;
+      const outcomeNames = ['Rehomed', 'Reclaimed', 'Euthanised', 'Currently in care', 'Returned', 'Transferred', 'Other'];
+      const outcomeLabelWidth = Math.max(...outcomeNames.map(label => measure.measureText(label).width));
+      measure.font = `400 13px "${BODY}", Arial, sans-serif`;
+      const targetGutter = Math.ceil(Math.max(outcomeLabelWidth, measure.measureText('15,852 · 100.0%').width)) + 37;
+      spec.signals.find(s => s.name === 'sourceX').update = String(sourceGutter);
+      spec.signals.find(s => s.name === 'targetX').update = `width - ${targetGutter}`;
+      const outcomeHeading = spec.marks.find(mark => mark.type === 'text' &&
+        mark.encode?.update?.text?.signal?.includes('Outcome /'));
+      if (outcomeHeading) {
+        outcomeHeading.encode.update.x = { signal: 'width - 12' };
+        outcomeHeading.encode.update.align = { value: 'right' };
+      }
       spec.signals.find(s => s.name === 'unit').update =
         '(height - chartTop - 30 - 7 * nodeGap) / 15852';
     }
@@ -329,7 +351,7 @@
     saFeatures = spec.vconcat[0].data.values;
     const sideBySide = available >= 640;
     const width = sideBySide ? Math.floor((available - 96) / 2) : Math.max(220, available - 36);
-    const height = sideBySide ? 320 : 290;
+    const height = sideBySide ? 360 : 290;
     saLayout = { width, height };
     const fit = saProjectionFit(saFeatures, width, height);
     const tooltip = [
@@ -341,7 +363,7 @@
     function panel(detail) {
       return {
         width, height,
-        title: detail ? 'Detail · explore councils' : 'South Australia · overview',
+        title: detail ? 'Adelaide and selected councils' : 'South Australia',
         projection: detail ? {
           type: 'azimuthalEqualArea', rotate: [-135, 32, 0],
           scale: { expr: 'saBaseScale * saZoom / 3' },
@@ -475,9 +497,11 @@
       zoom.setAttribute('aria-valuetext', `${saState.zoom.toFixed(1)} times the surrounding-area view${saState.zoom === 3 ? ', selected area only' : ''}`);
       const feature = saFeatures.find(f => f.properties.LGA_NAME_2025 === saState.selected);
       if (!feature) {
-        detail.textContent = 'Overview: darker purple means a higher share of recorded owners with two or more dogs. The detail map starts with Adelaide metropolitan councils.';
+        detail.textContent = '';
+        detail.hidden = true;
         return;
       }
+      detail.hidden = false;
       const p = feature.properties;
       detail.textContent = Number.isFinite(p.Share)
         ? `${p.LGA_NAME_2025}: ${(p.Share * 100).toFixed(1)}% of recorded dog owners had two or more dogs (${p.MultiDogOwners.toLocaleString('en-AU')} of ${p.DogOwners.toLocaleString('en-AU')} owners). Snapshot: 30 May 2025.`
@@ -552,6 +576,20 @@
           if (signalName) spec.signals.find(s => s.name === signalName).value = selected;
           host.textContent = '';
           const result = await vegaEmbed(host, spec, { actions: false, renderer: 'svg' });
+          // Vega's nominal width can exclude axes, labels and padding. Preserve
+          // its complete coordinate system and scale the finished SVG to fit.
+          const svg = host.querySelector('svg');
+          if (svg) {
+            const naturalWidth = Number(svg.getAttribute('width'));
+            const naturalHeight = Number(svg.getAttribute('height'));
+            if (naturalWidth > 0 && naturalHeight > 0) {
+              svg.setAttribute('viewBox', `0 0 ${naturalWidth} ${naturalHeight}`);
+              svg.setAttribute('preserveAspectRatio', 'xMinYMin meet');
+              svg.style.width = `${Math.min(width, naturalWidth)}px`;
+              svg.style.maxWidth = '100%';
+              svg.style.height = 'auto';
+            }
+          }
           views.set(id, result.view);
           if (id === 'sa-ownership-map') saController?.attach(result.view);
           host.classList.remove('chart-error');
