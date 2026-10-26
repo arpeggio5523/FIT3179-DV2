@@ -259,3 +259,13 @@ footer p { color:var(--muted); font-size:13px; margin:0; }
     padding-right:clamp(32px,4vw,72px);
   }
 }
+
+/* Complaints: align the text and figure tops, with more room for the slopes. */
+@media (min-width:901px) {
+  #section-complaints-heading .story-row {
+    grid-template-columns:minmax(0, 0.85fr) minmax(0, 1.15fr);
+    column-gap:clamp(32px, 3vw, 52px);
+    align-items:start;
+  }
+}
+#section-complaints-heading .chart-panel { margin-top:0; }

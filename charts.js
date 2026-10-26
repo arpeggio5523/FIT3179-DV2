@@ -107,19 +107,25 @@
     spec.width = width;
     if (isLite) spec.autosize = { type: 'fit-x', contains: 'padding', resize: true };
     if (id === 'breed-chart') {
-      spec.layer[1].encoding.color.condition.value = '#A355BE';
+      spec.layer[1].encoding.color.condition.value = '#C93645'; // Crimson highlight, distinct from the purple bump chart.
       spec.height = { step: 32 };
       spec.encoding.y.axis.labelFontSize = 13;
       spec.width = width - 225;
-      spec.padding = { left: 210, right: 15, top: 8, bottom: 60 };
+      spec.padding = { left: 186, right: 39, top: 8, bottom: 60 }; // Shift the lollipop figure 24 px left, preserving its width.
       spec.autosize = { type: 'none', contains: 'content' };
       spec.encoding.x.axis.tickCount = 4;
     }
     if (id === 'council-breed-butterfly') {
       walk(spec, obj => {
-        if (obj.value === '#0072B2') obj.value = '#B65AA4';
-        if (obj.value === '#B86B00') obj.value = '#E6AC24';
+        if (obj.value === '#0072B2') obj.value = '#455AC4'; // Indigo: entries without Cross.
+        if (obj.value === '#B86B00') obj.value = '#9BAA27'; // Yellow-green: corresponding Cross entries.
       });
+      // Vega returns to update on pointer-out; explicitly restore hover-modified opacity.
+      for (const mark of spec.marks) {
+        if (mark.type === 'rect' && mark.encode?.hover?.opacity) {
+          mark.encode.update.opacity = { value: 1 };
+        }
+      }
       spec.width = Math.max(580, available - 64);
       spec.height = 350;
       spec.padding = { left: 32, right: 32, top: 65, bottom: 65 };
@@ -128,9 +134,24 @@
     if (id === 'townsville-complaints-slope') {
       // Highlight the largest absolute fall and rise; retain other categories as context.
       spec.scales.find(s => s.name === 'colour').range = ['#2896B5', '#A1AAB3', '#A1AAB3', '#F28E2B', '#A1AAB3', '#A1AAB3'];
-      spec.width = Math.max(240, available - 410);
-      spec.height = 340;
-      spec.padding = { left: 205, right: 205, top: 50, bottom: 55 };
+      const compact = available < 560;
+      const labelGutter = compact ? 112 : 190;
+      const copyHeight = document.querySelector('#section-complaints-heading .story-copy').getBoundingClientRect().height;
+      spec.width = Math.max(60, available - labelGutter * 2);
+      spec.height = window.innerWidth > 900
+        ? Math.max(460, Math.min(650, copyHeight - 88)) : 430;
+      spec.padding = { left: labelGutter, right: labelGutter, top: 38, bottom: 50 };
+      // Wrap endpoint labels on narrow screens rather than shrinking the whole SVG.
+      for (const mark of spec.marks) {
+        if (mark.type !== 'text' || mark.from?.data !== 'complaints') continue;
+        const enc = mark.encode.update;
+        const side = enc.y.field === 'LabelStart' ? 'Start' : 'End';
+        enc.text = { signal: compact
+          ? `replace(datum.Category, ' ', '\\n') + '\\n' + format(datum.${side}, ',')`
+          : `datum.Category + '  ' + format(datum.${side}, ',')` };
+        enc.lineBreak = { value: '\n' };
+        enc.lineHeight = { value: 16 };
+      }
       spec.autosize = { type: 'none', contains: 'content', resize: false };
       const rows = spec.data.find(d => d.name === 'complaints').values;
       // A slope chart compares positions, not bar lengths. Show the occupied range,
@@ -142,15 +163,17 @@
       yScale.nice = false;
       spec.axes[0].values = [600, 800, 1000, 1200, 1400];
       spec.marks[spec.marks.length - 1].encode.update.text = {
-        value: 'Shared count scale: 500–1,400 · zero omitted'
+        value: compact ? 'Shared count scale: 500–1,400\nZero omitted' : 'Shared count scale: 500–1,400 · zero omitted'
       };
+      spec.marks[spec.marks.length - 1].encode.update.lineBreak = { value: '\n' };
       for (const side of ['Start', 'End']) {
         const ordered = [...rows].sort((a,b) => b[side]-a[side]);
-        let previous = -26;
-        ordered.forEach(d => { d['Label'+side] = Math.max(spec.height * (ymax-d[side])/(ymax-ymin), previous+26); previous=d['Label'+side]; });
+        const labelGap = compact ? 56 : 28;
+        let previous = -labelGap;
+        ordered.forEach(d => { d['Label'+side] = Math.max(spec.height * (ymax-d[side])/(ymax-ymin), previous+labelGap); previous=d['Label'+side]; });
         if (previous > spec.height) {
           ordered[ordered.length-1]['Label'+side] = spec.height;
-          for (let i=ordered.length-2;i>=0;i--) ordered[i]['Label'+side] = Math.min(ordered[i]['Label'+side],ordered[i+1]['Label'+side]-26);
+          for (let i=ordered.length-2;i>=0;i--) ordered[i]['Label'+side] = Math.min(ordered[i]['Label'+side],ordered[i+1]['Label'+side]-labelGap);
         }
       }
     }
@@ -272,7 +295,7 @@
       spec.height = { step: 32 };
       spec.encoding.y.axis = { ...spec.encoding.y.axis, labelLimit: 0 };
       spec.layer[1].encoding.color.scale.range = ['#FFFFFF', '#D12D67'];
-      spec.layer[1].encoding.color.legend = { orient: 'top', direction: 'horizontal', title: null, symbolType: 'circle' };
+      spec.layer[1].encoding.color.legend = { orient: 'top', direction: 'horizontal', title: null, symbolType: 'circle', columns: 2, columnPadding: 28, symbolOffset: 8 };
       // Colour differentiates the years; use one consistent circular shape.
       spec.layer[1].mark.shape = 'circle';
       spec.layer[1].mark.stroke = '#D12D67';
@@ -285,7 +308,14 @@
       const keyHeight = stacked ? 144 : 62;
       const signal = name => spec.signals.find(s => s.name === name);
       signal('gridSize').update = 'min(280, width - 16)';
-      signal('gridX').update = '8';
+      // Align to the visible Medium label, whose left-aligned legend group
+      // is left of the chart container's mathematical centre.
+      const keyMeasure = document.createElement('canvas').getContext('2d');
+      keyMeasure.font = `700 15px "${BODY}", Arial, sans-serif`;
+      const mediumHalfWidth = keyMeasure.measureText('Medium · 38%').width / 2;
+      signal('gridX').update = stacked
+        ? '(width - gridSize) / 2'
+        : `clamp(8 + (width - 16) / 3 + 23 + ${mediumHalfWidth} - gridSize / 2, 8, width - gridSize - 8)`;
       signal('legendX').update = '8';
       signal('legendY').update = '4';
       spec.height = Math.min(280, width - 16) + keyHeight + 10;
@@ -668,8 +698,8 @@
           buttons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
           const row = current.data('sizes').find(d => d.Size === selected);
           document.getElementById('dog-size-status').textContent = row
-            ? `${row.Size}: ${row.Percent}% of dogs in the published size distribution (${row.Weight}).`
-            : 'Each square represents one percentage point of the published size distribution.';
+            ? `One square = one percentage point. ${row.Size}: ${row.Percent}% (${row.Weight}).`
+            : 'One square = one percentage point.';
         });
       });
     }
