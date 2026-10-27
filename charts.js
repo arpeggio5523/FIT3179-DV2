@@ -852,6 +852,7 @@
 
       feature.properties.Division = division;
       feature.properties.OverviewLabel = division === 3 ? '3, 5–9' : String(division);
+      feature.properties.Snapshot = "March 2026";
       feature.properties.DivisionName =
         `Electoral Division ${division}`;
 
@@ -868,22 +869,10 @@
       );
 
       const tooltip = [
-        {
-          field: "properties.DivisionName",
-          type: "nominal",
-          title: "Area"
-        },
-        {
-          field: "properties.Suburbs",
-          type: "nominal",
-          title: "Selected suburbs/localities"
-        },
-        {
-          field: "properties.Dogs2026",
-          type: "quantitative",
-          title: "Dog records · March 2026",
-          format: ",d"
-        }
+        { field: "properties.DivisionName", type: "nominal", title: "Division" },
+        { field: "properties.Dogs2026", type: "quantitative", title: "Dog records", format: ",d" },
+        { field: "properties.Snapshot", type: "nominal", title: "Snapshot" },
+        { field: "properties.Suburbs", type: "nominal", title: "Localities" }
       ];
 
       return {
@@ -936,23 +925,11 @@
               },
 
               tooltip: [
-                {
-                  field: "DivisionName",
-                  type: "nominal",
-                  title: "Area"
-                },
-                {
-                  field: "Suburbs",
-                  type: "nominal",
-                  title: "Selected suburbs/localities"
-                },
-                {
-                  field: "Dogs2026",
-                  type: "quantitative",
-                  title: "Division total · March 2026",
-                  format: ",d"
-                }
-              ]
+        { field: "DivisionName", type: "nominal", title: "Division" },
+        { field: "Dogs2026", type: "quantitative", title: "Dog records", format: ",d" },
+        { field: "Snapshot", type: "nominal", title: "Snapshot" },
+        { field: "Suburbs", type: "nominal", title: "Localities" }
+      ]
             }
           },
 

@@ -269,3 +269,44 @@ footer p { color:var(--muted); font-size:13px; margin:0; }
   }
 }
 #section-complaints-heading .chart-panel { margin-top:0; }
+
+/* Readable hover tables: short keys, top-aligned rows and fully wrapped values. */
+#vg-tooltip-element.vg-tooltip {
+  box-sizing:border-box;
+  width:max-content;
+  max-width:min(440px, calc(100vw - 24px));
+  padding:12px 14px;
+  background:#fff;
+  color:#263e50;
+  border:1px solid #ccd6df;
+  border-radius:6px;
+  box-shadow:0 3px 12px rgba(23,44,64,.16);
+  font-family:'Source Sans 3',Arial,sans-serif;
+  font-size:14px;
+  line-height:1.45;
+}
+#vg-tooltip-element.vg-tooltip table { width:100%; border-collapse:collapse; }
+#vg-tooltip-element.vg-tooltip table tr td {
+  padding:4px 0;
+  vertical-align:top;
+  line-height:1.45;
+  border:0;
+}
+#vg-tooltip-element.vg-tooltip table tr td.key {
+  max-width:140px;
+  padding-right:14px;
+  color:#526372;
+  font-weight:600;
+  text-align:left;
+  white-space:normal;
+}
+#vg-tooltip-element.vg-tooltip table tr td.value {
+  display:table-cell;
+  max-width:280px;
+  max-height:none;
+  overflow:visible;
+  text-align:left;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  font-variant-numeric:tabular-nums;
+}
